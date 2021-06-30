@@ -55,8 +55,9 @@
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
 ;; Adapted From: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
-(with-eval-after-load 'org
-    (defun meq/outline-folded-p nil
+;;;###autoload
+(defun meq/outline-folded-p nil
+    (with-eval-after-load 'org
         "Returns non-nil if point is on a folded headline or plain list
         item."
         (interactive)
@@ -66,44 +67,54 @@
                 outline-on-heading-p)
             (invisible-p (point-at-eol))))
 
-    ;; Adapted From:
-    ;; Answer: https://emacs.stackexchange.com/a/37791/31428
-    ;; User: https://emacs.stackexchange.com/users/12497/toothrot
-    (defun meq/go-to-parent nil (interactive)
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/37791/31428
+;; User: https://emacs.stackexchange.com/users/12497/toothrot
+;;;###autoload
+(defun meq/go-to-parent nil (interactive)
+    (with-eval-after-load 'org
         (outline-up-heading (if (and (or (org-at-heading-p) (invisible-p (point))) (invisible-p (point-at-eol))
                 (>= (org-current-level) 2))
-            1 0)))
-    (with-eval-after-load 'evil (advice-add #'evil-close-fold :before #'meq/go-to-parent))
-    (with-eval-after-load 'aiern (advice-add #'aiern-close-fold :before #'meq/go-to-parent))
+            1 0))))
+;;;###autoload
+(with-eval-after-load 'evil (advice-add #'evil-close-fold :before #'meq/go-to-parent))
+;;;###autoload
+(with-eval-after-load 'aiern (advice-add #'aiern-close-fold :before #'meq/go-to-parent))
 
-    ;; Adapted From: https://www.reddit.com/r/emacs/comments/6klewl/org_cyclingto_go_from_folded_to_children_skipping/djniygy?utm_source=share&utm_medium=web2x&context=3
-    (defun meq/org-cycle nil (interactive)
-        (if (meq/outline-folded-p) (org-cycle) (evil-close-fold)))
+;; Adapted From: https://www.reddit.com/r/emacs/comments/6klewl/org_cyclingto_go_from_folded_to_children_skipping/djniygy?utm_source=share&utm_medium=web2x&context=3
+;;;###autoload
+(defun meq/org-cycle nil (interactive)
+    (with-eval-after-load 'org (if (meq/outline-folded-p) (org-cycle) (evil-close-fold))))
 
-    ;; Adapted From:
-    ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
-    ;; User: https://emacs.stackexchange.com/users/2370/tobias
-    (defun meq/org-babel-tangle-append nil
-        "Append source code block at point to its tangle file.
-        The command works like `org-babel-tangle' with prefix arg
-        but `delete-file' is ignored."
-        (interactive)
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
+;; User: https://emacs.stackexchange.com/users/2370/tobias
+;;;###autoload
+(defun meq/org-babel-tangle-append nil
+    "Append source code block at point to its tangle file.
+    The command works like `org-babel-tangle' with prefix arg
+    but `delete-file' is ignored."
+    (interactive)
+    (with-eval-after-load 'org 
         (cl-letf (((symbol-function 'delete-file) #'ignore))
-            (org-babel-tangle '(4))))
+            (org-babel-tangle '(4)))))
 
-    ;; Adapted From:
-    ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
-    ;; User: https://emacs.stackexchange.com/users/2370/tobias
-    (defun meq/org-babel-tangle-append-setup nil
-        "Add key-binding C-c C-v C-t for `meq/org-babel-tangle-append'."
-        (org-defkey org-mode-map (naked "C-c C-v +") 'meq/org-babel-tangle-append))
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
+;; User: https://emacs.stackexchange.com/users/2370/tobias
+;;;###autoload
+(defun meq/org-babel-tangle-append-setup nil
+    "Add key-binding C-c C-v C-t for `meq/org-babel-tangle-append'."
+    (with-eval-after-load 'org (org-defkey org-mode-map (naked "C-c C-v +") 'meq/org-babel-tangle-append)))
 
-    ;; Adapted From:
-    ;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
-    ;; User: https://emacs.stackexchange.com/users/2370/tobias
-    (defun meq/org-babel-tangle-collect-blocks-handle-tangle-list (&optional language tangle-file)
-        "Can be used as :override advice for `org-babel-tangle-collect-blocks'.
-        Handles lists of :tangle files."
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
+;; User: https://emacs.stackexchange.com/users/2370/tobias
+;;;###autoload
+(defun meq/org-babel-tangle-collect-blocks-handle-tangle-list (&optional language tangle-file)
+    "Can be used as :override advice for `org-babel-tangle-collect-blocks'.
+    Handles lists of :tangle files."
+    (with-eval-after-load 'org
         (let ((counter 0) last-heading-pos blocks)
             (org-babel-map-src-blocks (buffer-file-name)
             (let ((current-heading-pos
@@ -130,14 +141,16 @@
                 (if by-lang (setcdr by-lang (cons block (cdr by-lang)))
                 (push (cons src-lang (list block)) blocks)))))))) ; Tobias: just ()
             ;; Ensure blocks are in the correct order.
-            (mapcar (lambda (b) (cons (car b) (nreverse (cdr b)))) blocks)))
+            (mapcar (lambda (b) (cons (car b) (nreverse (cdr b)))) blocks))))
 
-    ;; Adapted From:
-    ;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
-    ;; User: https://emacs.stackexchange.com/users/2370/tobias
-    (defun meq/org-babel-tangle-single-block-handle-tangle-list (oldfun block-counter &optional only-this-block)
-        "Can be used as :around advice for `org-babel-tangle-single-block'.
-        If the :tangle header arg is a list of files. Handle all files"
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
+;; User: https://emacs.stackexchange.com/users/2370/tobias
+;;;###autoload
+(defun meq/org-babel-tangle-single-block-handle-tangle-list (oldfun block-counter &optional only-this-block)
+    "Can be used as :around advice for `org-babel-tangle-single-block'.
+    If the :tangle header arg is a list of files. Handle all files"
+    (with-eval-after-load 'org
         (let* ((info (org-babel-get-src-block-info))
             (params (nth 2 info))
             (tfiles (cdr (assoc :tangle params))))
@@ -160,32 +173,43 @@
                 tfiles)))
             (if only-this-block
                 (list (cons (cl-caaar ret) (mapcar #'cadar ret)))
-            ret)))))
+            ret))))))
 
-    (defun meq/src-mode-settings nil (interactive)
-        (meq/disable-all-modal-modes) (when (featurep 'focus) (focus-mode 1)))
-    (defun meq/src-mode-exit nil (interactive)
-        (when (featurep 'winner-mode) (winner-undo)) (meq/disable-all-modal-modes))
+;;;###autoload
+(defun meq/src-mode-settings nil (interactive)
+    (with-eval-after-load 'org (meq/disable-all-modal-modes) (when (featurep 'focus) (focus-mode 1))))
+;;;###autoload
+(defun meq/src-mode-exit nil (interactive)
+    (with-eval-after-load 'org (when (featurep 'winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
 
-    ;; Adapted From: https://github.com/syl20bnr/spacemacs/issues/13058#issuecomment-565741009
-    (advice-add #'org-edit-src-exit :after #'meq/src-mode-exit)
-    (advice-add #'org-edit-src-abort :after #'meq/src-mode-exit)
-    (advice-add #'org-edit-special :after #'meq/src-mode-settings)
-    (advice-add #'org-babel-tangle-collect-blocks :override #'meq/org-babel-tangle-collect-blocks-handle-tangle-list)
-    (advice-add #'org-babel-tangle-single-block :around #'meq/org-babel-tangle-single-block-handle-tangle-list)
-    (add-hook 'org-mode-hook 'meq/org-babel-tangle-append-setup)
-    (add-hook 'org-cycle-hook '(lambda (state) (interactive) (when (eq state 'children) (setq org-cycle-subtree-status 'subtree))))
+;; Adapted From: https://github.com/syl20bnr/spacemacs/issues/13058#issuecomment-565741009
+;;;###autoload
+(advice-add #'org-edit-src-exit :after #'meq/src-mode-exit)
+;;;###autoload
+(advice-add #'org-edit-src-abort :after #'meq/src-mode-exit)
+;;;###autoload
+(advice-add #'org-edit-special :after #'meq/src-mode-settings)
+;;;###autoload
+(advice-add #'org-babel-tangle-collect-blocks :override #'meq/org-babel-tangle-collect-blocks-handle-tangle-list)
+;;;###autoload
+(advice-add #'org-babel-tangle-single-block :around #'meq/org-babel-tangle-single-block-handle-tangle-list)
+;;;###autoload
+(add-hook 'org-mode-hook 'meq/org-babel-tangle-append-setup)
+;;;###autoload
+(add-hook 'org-cycle-hook '(lambda (state) (interactive) (when (eq state 'children) (setq org-cycle-subtree-status 'subtree))))
 
-    ;; Adapted From: http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
-    (defun meq/narrow-or-widen-dwim (p)
-        "Widen if buffer is narrowed, narrow-dwim otherwise.
-        Dwim means: region, org-src-block, org-subtree, or
-        defun, whichever applies first. Narrowing to
-        org-src-block actually calls `org-edit-src-code'.
+;; Adapted From: http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+;;;###autoload
+(defun meq/narrow-or-widen-dwim (p)
+    "Widen if buffer is narrowed, narrow-dwim otherwise.
+    Dwim means: region, org-src-block, org-subtree, or
+    defun, whichever applies first. Narrowing to
+    org-src-block actually calls `org-edit-src-code'.
 
-        With prefix P, don't widen, just narrow even if buffer
-        is already narrowed."
-        (interactive "P")
+    With prefix P, don't widen, just narrow even if buffer
+    is already narrowed."
+    (interactive "P")
+    (with-eval-after-load 'org
         (declare (interactive-only))
         (cond ((and (buffer-narrowed-p) (not p)) (widen))
                 ((region-active-p)
@@ -202,7 +226,7 @@
                 ((derived-mode-p 'latex-mode)
                 (LaTeX-narrow-to-environment))
                 (t (narrow-to-defun)))
-            (meq/src-mode-settings)))
+            (meq/src-mode-settings))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/42240
@@ -236,12 +260,10 @@
 ;; Answer: https://superuser.com/a/331662/1154755
 ;; User: https://superuser.com/users/656734/phimuemue
 ;;;###autoload
-(defun meq/end-of-line-and-indented-new-line nil (interactive)
-    (end-of-line)
-    (newline-and-indent))
+(defun meq/end-of-line-and-indented-new-line nil (interactive) (end-of-line) (newline-and-indent))
 
-(defun meq/any-popup-showing-p nil (interactive)
-    (or hercules--popup-showing-p (which-key--popup-showing-p)))
+;;;###autoload
+(defun meq/any-popup-showing-p nil (interactive) (or hercules--popup-showing-p (which-key--popup-showing-p)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/12997/how-do-i-use-nadvice/14827#14827
@@ -266,6 +288,7 @@
             (when force (setq which-key-really-dont-show nil) (funcall show-popup keymap))
             (funcall show-popup keymap))))
 
+;;;###autoload
 (with-eval-after-load 'aiern (mapc #'(lambda (state) (interactive)
     (add-hook (intern (concat "aiern-" (symbol-name (car state)) "-state-entry-hook"))
         #'(lambda nil (interactive)
@@ -305,6 +328,7 @@
         (setq overriding-terminal-local-map nil)
         (when flatten (advice-remove #'which-key--update #'ignore))
         (meq/which-key-show-top-level))
+;;;###autoload
 (advice-add #'hercules--hide :override #'meq/hercules--hide-advice)
 
 ;;;###autoload
@@ -331,6 +355,7 @@
                                 t #'hercules--hide)
             (internal-push-keymap (symbol-value keymap)
                                     'overriding-terminal-local-map)))))
+;;;###autoload
 (advice-add #'hercules--show :override #'meq/hercules--show-advice)
 
 ;;;###autoload
@@ -384,7 +409,9 @@
     (if (window-minibuffer-p)
         (alloy-def :keymaps 'override (naked "RET") nil)
         (alloy-def :keymaps 'override (naked "RET") 'newline-and-indent)))
+;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
+;;;###autoload
 (add-hook 'post-command-hook 'meq/pre-post-command-hook-command)
 
 ;;;###autoload
@@ -398,7 +425,9 @@
     (use-global-map last-global-map)
     (setq last-global-map nil)
     (meq/which-key--show-popup))
+;;;###autoload
 (with-eval-after-load 'aiern (advice-add #'aiern-ex :around #'meq/evil-ex-advice))
+;;;###autoload
 (with-eval-after-load 'evil (advice-add #'evil-ex :around #'meq/evil-ex-advice))
 
 ;; From:
@@ -415,7 +444,7 @@
   "Replace tabs with spaces except in makefiles."
   (unless (derived-mode-p 'makefile-mode)
     (meq/untabify-everything)))
-
+;;;###autoload
 (add-hook 'before-save-hook 'meq/untabify-except-makefiles)
 
 ;; Adapted From: https://github.com/emacsorphanage/god-mode/blob/master/god-mode.el#L454
@@ -430,28 +459,37 @@ be ignored by `god-execute-with-current-bindings'."
                        universal-argument
                        universal-argument-more)))
 
+;;;###autoload
 (defun meq/which-theme nil (interactive)
     (when (member "--theme" command-line-args)
         (load-theme (intern (concat
             (nth (1+ (seq-position command-line-args "--theme")) command-line-args)
             (if (member "--light" command-line-args) "-light" "-dark"))))))
 
+;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
     (aiern-ex-define-cmd cmd function))))
 
+;;;###autoload
 (with-eval-after-load 'counsel (advice-add #'counsel-M-x :before #'meq/which-key--hide-popup))
+;;;###autoload
 (with-eval-after-load 'helm
     (advice-add #'helm-smex-major-mode-commands :before #'meq/which-key--hide-popup)
     (advice-add #'helm-smex :before #'meq/which-key--hide-popup))
 
 ;; TODO
+;; ;;;###autoload
 ;; (advice-add #'execute-extended-command :before #'meq/which-key--hide-popup)
 
+;;;###autoload
 (advice-add #'keyboard-escape-quit :after #'meq/which-key--show-popup)
+;;;###autoload
 (advice-add #'keyboard-quit :after #'meq/which-key--show-popup)
+;;;###autoload
 (advice-add #'exit-minibuffer :after #'meq/which-key--show-popup)
 
+;;;###autoload
 (add-hook 'after-init-hook 'key-chord-mode)
 
 (provide 'meq)
