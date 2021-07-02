@@ -481,6 +481,28 @@ be ignored by `god-execute-with-current-bindings'."
             (if (member "--light" command-line-args) "-light" "-dark"))))))
 
 ;;;###autoload
+(defun meq/hydra-force-disable nil
+    "Disable the current Hydra."
+    (interactive)
+    (with-eval-after-load 'hydra
+        (setq hydra-deactivate nil)
+        (remove-hook 'pre-command-hook 'hydra--clearfun)
+        (if (fboundp 'remove-function)
+                (remove-function input-method-function #'hydra--imf)
+                (when hydra--input-method-function
+                    (setq input-method-function hydra--input-method-function)
+                    (setq hydra--input-method-function nil))))
+        (dolist (frame (frame-list))
+            (with-selected-frame frame
+            (when overriding-terminal-local-map
+                (internal-pop-keymap hydra-curr-map 'overriding-terminal-local-map))))
+        (setq hydra-curr-map nil)
+        (when hydra-curr-on-exit
+            (let ((on-exit hydra-curr-on-exit))
+            (setq hydra-curr-on-exit nil)
+            (funcall on-exit))))
+
+;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
     (aiern-ex-define-cmd cmd function))))
