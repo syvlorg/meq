@@ -445,6 +445,8 @@
         ;; don't abort macros
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ;; Back to the default
+
+        ;; TODO: Incorporate deino-keyboard-quit and hydra-keyboard-quit here
         ((unwind-protect (keyboard-quit)
            (when interactive
              (setq this-command 'keyboard-quit))))))
