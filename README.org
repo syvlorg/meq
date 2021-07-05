@@ -51,6 +51,7 @@
 (defvar last-global-map nil)
 (defvar which-key-really-dont-show t)
 (defvar current-theme nil)
+(defvar current-theme-mode nil)
 
 ;; Adapted From: https://emacsredux.com/blog/2019/01/10/convert-a-keyword-to-a-symbol/
 ;;;###autoload
@@ -501,7 +502,10 @@ be ignored by `god-execute-with-current-bindings'."
                        universal-argument-more)))
 
 ;;;###autoload
-(defun meq/load-theme (theme) (interactive) (setq current-theme theme) (load-theme theme))
+(defun meq/load-theme (theme) (interactive)
+    (setq current-theme theme)
+    (setq current-theme-mode (car (last (split-string (symbol-name theme) "-"))))
+    (load-theme theme))
 
 ;;;###autoload
 (defun meq/which-theme nil (interactive)
@@ -510,7 +514,12 @@ be ignored by `god-execute-with-current-bindings'."
             (nth (1+ (seq-position command-line-args "--theme")) command-line-args)
             (if (member "--light" command-line-args) "-light" "-dark"))))))
 
-;; ;;;###autoload
+;;;###autoload
+(defun meq/switch-theme-mode nil (interactive)
+    (meq/load-theme (intern (concat
+        (replace-regexp-in-string "-dark" "" (replace-regexp-in-string "-light" "" (symbol-name current-theme)))
+        "-"
+        (if (string= current-theme-mode "light") "dark" "light")))))
 
 ;;;###autoload
 (defun meq/hydra-force-disable nil
