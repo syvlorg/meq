@@ -27,8 +27,7 @@
 
 (require 'hercules)
 (require 'naked)
-(require 'cl-lib)
-(require 's)
+(require 'janus)
 
 (defvar modal-modes nil)
 (defvar modal-prefixes (mapcar (lambda (mode) (interactive) (car (split-string (symbol-name mode) "-"))) modal-modes))
@@ -490,36 +489,6 @@ be ignored by `god-execute-with-current-bindings'."
                        negative-argument
                        universal-argument
                        universal-argument-more)))
-
-;;;###autoload
-(defun meq/load-theme (theme) (interactive)
-    (let* ((name (symbol-name theme)))
-        (setq current-theme theme)
-        (setq current-theme-mode (car (last (split-string name "-"))))
-        (if (or (s-contains? "orange" name)
-                (s-contains? "flamingo-pink" name))
-            ;; Adapted From: http://ergoemacs.org/emacs/elisp_define_face.html
-            (face-spec-set 'meq/flamingo-pink
-                '((((class color) (background light))
-                    :foreground "#ab5dee" :bold t)
-                    (((class color) (background dark))
-                    :foreground "#fca78e" :bold t)) 'face-defface-spec)
-            (face-spec-set 'meq/flamingo-pink '((t (:foreground "#fca78e" :bold t))) 'face-defface-spec))
-        (load-theme theme)))
-
-;;;###autoload
-(defun meq/which-theme nil (interactive)
-    (when (member "--theme" command-line-args)
-        (meq/load-theme (intern (concat
-            (nth (1+ (seq-position command-line-args "--theme")) command-line-args)
-            (if (member "--light" command-line-args) "-light" "-dark"))))))
-
-;;;###autoload
-(defun meq/switch-theme-mode nil (interactive)
-    (meq/load-theme (intern (concat
-        (replace-regexp-in-string "-dark" "" (replace-regexp-in-string "-light" "" (symbol-name current-theme)))
-        "-"
-        (if (string= current-theme-mode "light") "dark" "light")))))
 
 ;;;###autoload
 (defun meq/hydra-force-disable nil
