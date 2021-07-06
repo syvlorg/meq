@@ -36,15 +36,11 @@
 (require 'naked)
 (require 'janus)
 
-(defvar modal-modes nil)
-(defvar modal-prefixes (mapcar (lambda (mode) (interactive) (car (split-string (symbol-name mode) "-"))) modal-modes))
-(defvar last-modal-mode nil)
-(defvar current-modal-mode nil)
-(defvar all-keymaps-map nil)
-(defvar last-global-map nil)
-(defvar which-key-really-dont-show t)
-(defvar current-theme nil)
-(defvar current-theme-mode nil)
+(defvar meq/var/modal-modes nil)
+(defvar meq/var/modal-prefixes (mapcar (lambda (mode) (interactive) (car (split-string (symbol-name mode) "-"))) meq/var/modal-modes))
+(defvar meq/var/current-modal-mode nil)
+(defvar meq/var/last-global-map nil)
+(defvar meq/var/which-key-really-dont-show t)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -252,7 +248,7 @@
                 (message (format "Disabling %s" (symbol-name mode-symbol)))
                 (ignore-errors
                     (funcall mode-symbol -1))))
-            modal-modes)
+            meq/var/modal-modes)
     (meq/hercules-hide-all-modal-modes keymap))
 
 ;; Answer: https://stackoverflow.com/a/14490054/10827766
@@ -282,7 +278,7 @@
 ;; User: https://emacs.stackexchange.com/users/2308/kdb
 ;;;###autoload
 (defun meq/which-key--hide-popup (&optional force dont-disable-modal-modes) (interactive)
-        (when force (setq which-key-really-dont-show t))
+        (when force (setq meq/var/which-key-really-dont-show t))
         (unless dont-disable-modal-modes (meq/disable-all-modal-modes))
         (setq which-key-persistent-popup nil)
         (which-key--hide-popup)
@@ -296,8 +292,8 @@
             (if disable-modal-modes
                 (meq/disable-all-modal-modes keymap)
                 (meq/which-key-show-top-level keymap)))))
-        (if which-key-really-dont-show
-            (when force (setq which-key-really-dont-show nil) (funcall show-popup keymap))
+        (if meq/var/which-key-really-dont-show
+            (when force (setq meq/var/which-key-really-dont-show nil) (funcall show-popup keymap))
             (funcall show-popup keymap))))
 
 ;;;###autoload
@@ -385,8 +381,9 @@
             #'(lambda nil (interactive)
                 (when which-key-persistent-popup (which-key--create-buffer-and-show nil current-map nil "Current bindings")))))
         (if (which-key--popup-showing-p)
-            (when (or (member current-modal-mode modal-modes) keymap)
-                (funcall which-key-function) (setq current-modal-mode nil))
+            ;; (when (or (member meq/var/current-modal-mode meq/var/modal-modes) keymap)
+            (when (or meq/var/current-modal-mode keymap)
+                (funcall which-key-function) (setq meq/var/current-modal-mode nil))
             (funcall which-key-function))))
 
 ;; Adapted From:
@@ -399,7 +396,7 @@
         (ignore-errors (funcall (intern (concat "meq/" prefix "-hercules-hide"))))
         ;; (internal-push-keymap 'global-map 'overriding-terminal-local-map)
         ;; (internal-push-keymap nil 'overriding-terminal-local-map)
-        (setq overriding-terminal-local-map nil)) modal-prefixes))
+        (setq overriding-terminal-local-map nil)) meq/var/modal-prefixes))
     (meq/which-key-show-top-level keymap))
 
 ;; Adapted From:
@@ -429,13 +426,13 @@
 ;;;###autoload
 (defun meq/evil-ex-advice (func &rest arguments)
     (meq/which-key--hide-popup nil t)
-    (setq last-global-map (current-global-map))
+    (setq meq/var/last-global-map (current-global-map))
     (use-global-map global-map)
 
     (apply func arguments)
 
-    (use-global-map last-global-map)
-    (setq last-global-map nil)
+    (use-global-map meq/var/last-global-map)
+    (setq meq/var/last-global-map nil)
     (meq/which-key--show-popup))
 ;;;###autoload
 (with-eval-after-load 'aiern (advice-add #'aiern-ex :around #'meq/evil-ex-advice))
