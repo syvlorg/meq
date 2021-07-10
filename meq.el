@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'hercules)
+(require 'cosmoem)
 (require 'naked)
 (require 'janus)
 
@@ -242,7 +242,7 @@
                 (ignore-errors
                     (funcall mode-symbol -1))))
             meq/var/modal-modes)
-    (meq/hercules-hide-all-modal-modes keymap))
+    (cosmoem-hide-all-modal-modes keymap))
 
 ;; Answer: https://stackoverflow.com/a/14490054/10827766
 ;; User: https://stackoverflow.com/users/1600898/user4815162342
@@ -262,9 +262,6 @@
 ;; User: https://superuser.com/users/656734/phimuemue
 ;;;###autoload
 (defun meq/end-of-line-and-indented-new-line nil (interactive) (end-of-line) (newline-and-indent))
-
-;;;###autoload
-(defun meq/any-popup-showing-p nil (interactive) (or hercules--popup-showing-p (which-key--popup-showing-p)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/12997/how-do-i-use-nadvice/14827#14827
@@ -312,52 +309,11 @@
 
 ;;;###autoload
 (defun meq/toggle-which-key (&optional keymap) (interactive)
-    (if (meq/any-popup-showing-p)
+    (if (any-popup-showing-p)
         (meq/which-key--hide-popup t)
         (meq/which-key--show-popup keymap t)
         ;; (meq/which-key-show-top-level keymap)
         ))
-
-;;;###autoload
-(defun meq/hercules--hide-advice (&optional keymap flatten &rest _)
-        "Dismiss hercules.el.
-    Pop KEYMAP from `overriding-terminal-local-map' when it is not
-    nil.  If FLATTEN is t, `hercules--show' was called with the same
-    argument.  Restore `which-key--update' after such a call."
-        (interactive)
-        (setq hercules--popup-showing-p nil)
-        (setq overriding-terminal-local-map nil)
-        (when flatten (advice-remove #'which-key--update #'ignore))
-        (meq/which-key-show-top-level))
-;;;###autoload
-(advice-add #'hercules--hide :override #'meq/hercules--hide-advice)
-
-;;;###autoload
-(defun meq/hercules--show-advice (&optional keymap flatten transient &rest _)
-    "Summon hercules.el showing KEYMAP.
-    Push KEYMAP onto `overriding-terminal-local-map' when TRANSIENT
-    is nil.  Otherwise use `set-transient-map'.  If FLATTEN is t,
-    show full keymap \(including sub-maps\), and prevent redrawing on
-    prefix-key press by overriding `which-key--update'."
-    (interactive)
-    (when which-key-persistent-popup
-        (setq hercules--popup-showing-p t)
-        (when keymap
-            (let ((which-key-show-prefix hercules-show-prefix))
-            (if flatten
-                (progn
-                    (which-key--show-keymap
-                    (symbol-name keymap) (symbol-value keymap) nil t t)
-                    (advice-add #'which-key--update :override #'ignore))
-                (which-key--show-keymap
-                (symbol-name keymap) (symbol-value keymap) nil nil t)))
-            (if transient
-                (set-transient-map (symbol-value keymap)
-                                t #'hercules--hide)
-            (internal-push-keymap (symbol-value keymap)
-                                    'overriding-terminal-local-map)))))
-;;;###autoload
-(advice-add #'hercules--show :override #'meq/hercules--show-advice)
 
 ;;;###autoload
 (defun meq/which-key-show-top-level (&optional keymap) (interactive)
@@ -378,19 +334,6 @@
             (when (or meq/var/current-modal-mode keymap)
                 (funcall which-key-function) (setq meq/var/current-modal-mode nil))
             (funcall which-key-function))))
-
-;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/a/42240
-;; User: user12563
-;;;###autoload
-(defun meq/hercules-hide-all-modal-modes (&optional keymap) (interactive)
-    (when overriding-terminal-local-map (mapc #'(lambda (prefix) (interactive)
-        (message (format "Hiding %s" prefix))
-        (ignore-errors (funcall (intern (concat "meq/" prefix "-hercules-hide"))))
-        ;; (internal-push-keymap 'global-map 'overriding-terminal-local-map)
-        ;; (internal-push-keymap nil 'overriding-terminal-local-map)
-        (setq overriding-terminal-local-map nil)) meq/var/modal-prefixes))
-    (meq/which-key-show-top-level keymap))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/14956/31428
