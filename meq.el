@@ -351,9 +351,11 @@
 
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
-    (if (window-minibuffer-p)
-        (alloy-def :keymaps 'override "RET" nil)
-        (alloy-def :keymaps 'override "RET" 'newline-and-indent)))
+    ;; (if (window-minibuffer-p)
+    (if (or (derived-mode-p 'prog-mode)
+            (derived-mode-p 'text-mode))
+        (alloy-def :keymaps 'override "RET" 'newline-and-indent)
+        (alloy-def :keymaps 'override "RET" nil)))
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
