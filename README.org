@@ -37,7 +37,11 @@
 (require 'janus)
 
 (defvar meq/var/modal-modes nil)
-(defvar meq/var/modal-prefixes (mapcar (lambda (mode) (interactive) (car (split-string (symbol-name mode) "-"))) meq/var/modal-modes))
+(defvar meq/var/ignored-modal-modes nil)
+(defvar meq/var/modal-prefixes (mapcar (lambda (mode) (interactive)
+    (car (split-string (symbol-name mode) "-"))) meq/var/modal-modes))
+(defvar meq/var/ignored-modal-prefixes (mapcar (lambda (mode) (interactive)
+    (car (split-string (symbol-name mode) "-"))) meq/var/ignored-modal-modes))
 (defvar meq/var/current-modal-mode nil)
 (defvar meq/var/last-global-map nil)
 (defvar meq/var/which-key-really-dont-show t)
@@ -244,7 +248,7 @@
     (mapc
         (lambda (mode-symbol)
             ;; some symbols are functions which aren't normal mode functions
-            (when (meq/fbatp mode-symbol)
+            (when (and (meq/fbatp mode-symbol) (not (member mode-symbol meq/var/ignored-modal-modes)))
                 (message (format "Disabling %s" (symbol-name mode-symbol)))
                 (ignore-errors
                     (funcall mode-symbol -1))))
