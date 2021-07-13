@@ -45,6 +45,8 @@
 (defvar meq/var/current-modal-mode nil)
 (defvar meq/var/last-global-map nil)
 (defvar meq/var/which-key-really-dont-show t)
+(defvar meq/var/last-evil-state nil)
+(defvar meq/var/last-aiern-state nil)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -244,16 +246,28 @@
 ;; Answer: https://emacs.stackexchange.com/a/42240
 ;; User: user12563
 ;;;###autoload
-(defun meq/disable-all-modal-modes (&optional keymap) (interactive)
+(defun meq/disable-all-modal-modes (&optional keymap include-ignored) (interactive)
     (mapc
         (lambda (mode-symbol)
             ;; some symbols are functions which aren't normal mode functions
-            (when (and (meq/fbatp mode-symbol) (not (member mode-symbol meq/var/ignored-modal-modes)))
+            (when (and
+                    (meq/fbatp mode-symbol)
+                    (not (member mode-symbol meq/var/ignored-modal-modes)))
                 (message (format "Disabling %s" (symbol-name mode-symbol)))
                 (ignore-errors
                     (funcall mode-symbol -1))))
             meq/var/modal-modes)
-    (cosmoem-hide-all-modal-modes keymap))
+    (mapc
+        (lambda (mode-symbol)
+            ;; some symbols are functions which aren't normal mode functions
+            (when (meq/fbatp mode-symbol)
+                (if include-ignored
+                    (progn (message (format "Disabling %s" (symbol-name mode-symbol)))
+                    (ignore-errors (funcall mode-symbol -1)))
+                    (message (format "Enabling %s" (symbol-name mode-symbol)))
+                    (ignore-errors (funcall mode-symbol 1)))))
+            meq/var/ignored-modal-modes)
+    (cosmoem-hide-all-modal-modes keymap include-ignored))
 
 ;; Answer: https://stackoverflow.com/a/14490054/10827766
 ;; User: https://stackoverflow.com/users/1600898/user4815162342
@@ -366,7 +380,11 @@
     (if (or (derived-mode-p 'prog-mode)
             (derived-mode-p 'text-mode))
         (alloy-def :keymaps 'override "RET" 'newline-and-indent)
-        (alloy-def :keymaps 'override "RET" nil)))
+        (alloy-def :keymaps 'override "RET" nil))
+    (if (not (derived-mode-p 'vterm-mode))
+        ()
+        ()
+        (meq/disable-all-modal-modes nil t)))
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
