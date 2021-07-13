@@ -398,9 +398,9 @@
         ;; Back to the default
 
         ;; TODO: Incorporate deino-keyboard-quit and hydra-keyboard-quit here
-        ((unwind-protect (keyboard-quit)
+        ((unwind-protect (keyboard-escape-quit)
            (when interactive
-             (setq this-command 'keyboard-quit))))))
+             (setq this-command 'keyboard-escape-quit))))))
 ;;;###autoload
 (advice-add #'keyboard-quit :override #'meq/doom/escape)
 
