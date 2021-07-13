@@ -408,7 +408,7 @@
 (advice-add #'keyboard-quit :override #'meq/doom/escape)
 
 ;;;###autoload
-(defun meq/M-x nil (interactive) (if (window-minibuffer-p) (keyboard-quit) (execute-extended-command nil)))
+(defun meq/M-x nil (interactive) (if (window-minibuffer-p) (meq/doom/escape) (execute-extended-command nil)))
 
 ;; From:
 ;; Answer: https://stackoverflow.com/questions/24832699/emacs-24-untabify-on-save-for-everything-except-makefiles
