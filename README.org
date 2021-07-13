@@ -42,11 +42,13 @@
     (car (split-string (symbol-name mode) "-"))) meq/var/modal-modes))
 (defvar meq/var/ignored-modal-prefixes (mapcar (lambda (mode) (interactive)
     (car (split-string (symbol-name mode) "-"))) meq/var/ignored-modal-modes))
-(defvar meq/var/current-modal-mode nil)
 (defvar meq/var/last-global-map nil)
 (defvar meq/var/which-key-really-dont-show t)
 (defvar meq/var/last-evil-state nil)
 (defvar meq/var/last-aiern-state nil)
+(defvar meq/var/backup-modal-modes nil)
+(defvar meq/var/backup-terminal-local-map nil)
+(defvar meq/var/all-modal-modes-off nil)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -63,7 +65,10 @@
 ;;;###autoload
 (defun meq/fbatp (mode) (interactive)
     (let* ((is-it-bound (boundp mode)))
-        (when is-it-bound (and (or (boundp (symbol-value mode))) (or (fboundp mode) (functionp mode))) mode)))
+        (when is-it-bound (and
+            (eval `(bound-and-true-p ,mode))
+            ;; (or (fboundp mode) (functionp mode))
+            ) mode)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
@@ -248,7 +253,7 @@
 ;;;###autoload
 (defun meq/disable-all-modal-modes (&optional keymap include-ignored) (interactive)
     (mapc
-        (lambda (mode-symbol)
+        #'(lambda (mode-symbol)
             ;; some symbols are functions which aren't normal mode functions
             (when (and
                     (meq/fbatp mode-symbol)
@@ -258,7 +263,7 @@
                     (funcall mode-symbol -1))))
             meq/var/modal-modes)
     (mapc
-        (lambda (mode-symbol)
+        #'(lambda (mode-symbol)
             ;; some symbols are functions which aren't normal mode functions
             (when (meq/fbatp mode-symbol)
                 (if include-ignored
@@ -267,6 +272,7 @@
                     (message (format "Enabling %s" (symbol-name mode-symbol)))
                     (ignore-errors (funcall mode-symbol 1)))))
             meq/var/ignored-modal-modes)
+    (when include-ignored (setq meq/var/all-modal-modes-off t))
     (cosmoem-hide-all-modal-modes keymap include-ignored))
 
 ;; Answer: https://stackoverflow.com/a/14490054/10827766
@@ -355,9 +361,7 @@
             #'(lambda nil (interactive)
                 (when which-key-persistent-popup (which-key--create-buffer-and-show nil current-map nil "Current bindings")))))
         (if (which-key--popup-showing-p)
-            ;; (when (or (member meq/var/current-modal-mode meq/var/modal-modes) keymap)
-            (when (or meq/var/current-modal-mode keymap)
-                (funcall which-key-function) (setq meq/var/current-modal-mode nil))
+            (when keymap (funcall which-key-function))
             (funcall which-key-function))))
 
 ;; Adapted From:
@@ -375,16 +379,27 @@
         ;; )
 
 ;;;###autoload
+(defun meq/current-modal-modes (&optional include-ignored) (interactive)
+    (-filter #'(lambda (mode) (interactive) (eval `(bound-and-true-p ,mode)))
+        (append (when include-ignored meq/var/ignored-modal-modes) meq/var/modal-modes)))
+
+;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
     ;; (if (window-minibuffer-p)
     (if (or (derived-mode-p 'prog-mode)
             (derived-mode-p 'text-mode))
         (alloy-def :keymaps 'override "RET" 'newline-and-indent)
         (alloy-def :keymaps 'override "RET" nil))
-    (if (not (derived-mode-p 'vterm-mode))
-        ()
-        ()
-        (meq/disable-all-modal-modes nil t)))
+    (if (derived-mode-p 'vterm-mode)
+        (unless meq/var/all-modal-modes-off (setq meq/var/backup-modal-modes (meq/current-modal-modes t)
+                meq/var/backup-terminal-local-map overriding-terminal-local-map
+                overriding-terminal-local-map vterm-mode-map)
+            (meq/disable-all-modal-modes nil t))
+        (when meq/var/all-modal-modes-off (mapc #'(lambda (mode) (interactive)
+            (when (meq/fbatp mode) (ignore-errors (funcall mode 1)))) meq/var/backup-modal-modes)
+            (setq meq/var/backup-modal-modes nil
+                meq/var/all-modal-modes-off nil
+                overriding-terminal-local-map meq/var/backup-terminal-local-map))))
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
