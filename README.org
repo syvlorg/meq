@@ -498,6 +498,14 @@ be ignored by `god-execute-with-current-bindings'."
             (setq hydra-curr-on-exit nil)
             (funcall on-exit))))
 
+;; Adapted From:
+;; Answer: https://stackoverflow.com/questions/2580650/how-can-i-reload-emacs-after-changing-it/51781491#51781491
+;; User: user4104817
+;;;###autoload
+(defun meq/reload-emacs nil (interactive)
+    (load (concat user-emacs-directory "early-init.el"))
+    (load (concat user-emacs-directory "init.el")))
+
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
