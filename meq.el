@@ -499,6 +499,43 @@ be ignored by `god-execute-with-current-bindings'."
     (load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el")))
 
+;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
+(defun meq/rename-current-buffer-file (&optional new-name*)
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (or new-name* (read-file-name "New name: " filename))))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists!" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+
+;; Adapted From: http://whattheemacsd.com/file-defuns.el-02.html
+(defun meq/delete-current-buffer-file nil
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-regular-p filename)))
+        (ido-kill-buffer)
+      (when (y-or-n-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/14861/31428
+;; User: user227
+(defun meq/substring (substring string) (string-match-p (regexp-quote substring) string))
+
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
