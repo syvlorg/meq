@@ -544,6 +544,9 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/substring (substring string) (string-match-p (regexp-quote substring) string))
 
 ;;;###autoload
+(defun meq/remove-dot-dirs (list*) (interactive) (--remove (or (string= "." it) (string= ".." it)) list*))
+
+;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
     (aiern-ex-define-cmd cmd function))))
