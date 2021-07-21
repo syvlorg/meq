@@ -205,10 +205,6 @@
 (advice-add #'org-babel-tangle-collect-blocks :override #'meq/org-babel-tangle-collect-blocks-handle-tangle-list)
 ;;;###autoload
 (advice-add #'org-babel-tangle-single-block :around #'meq/org-babel-tangle-single-block-handle-tangle-list)
-;;;###autoload
-(add-hook 'org-mode-hook 'meq/org-babel-tangle-append-setup)
-;;;###autoload
-(add-hook 'org-cycle-hook '(lambda (state) (interactive) (when (eq state 'children) (setq org-cycle-subtree-status 'subtree))))
 
 ;; Adapted From: http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
 ;;;###autoload
