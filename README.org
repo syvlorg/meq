@@ -70,6 +70,9 @@
             ;; (or (fboundp mode) (functionp mode))
             ) mode)))
 
+;;;###autoload
+(defun meq/listtp (list*) (interactive) (and list* (listp list*)))
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
