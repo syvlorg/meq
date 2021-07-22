@@ -549,7 +549,9 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/switch-to-buffer (buffer-or-name) (interactive)
-    `(,(intern (concat (if (meq/exwm-p) "exwm-workspace" "") "switch-to-buffer")) ,buffer-or-name))
+    (if (meq/exwm-p)
+        (exwm-workspace-switch-to-buffer buffer-or-name)
+        (switch-to-buffer buffer-or-name)))
 
 ;;;###autoload
 (defun meq/shell nil (interactive)
