@@ -76,10 +76,8 @@
 (defun meq/listtp (list*) (interactive) (and list* (listp list*)))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&utm_medium=web2x&context=3
-;; ;;;###autoload
-;; (defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
 ;;;###autoload
-(defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (derived-mode-p 'exwm-mode)))
+(defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
