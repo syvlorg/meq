@@ -548,70 +548,19 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/run (command &optional name) (start-process-shell-command (or name command) nil command))
 
 ;;;###autoload
+(defun meq/switch-to-buffer (buffer-or-name) (interactive)
+    `(,(intern (concat (if (meq/exwm-p) "exwm-workspace" "") "switch-to-buffer")) ,buffer-or-name))
+
+;;;###autoload
 (defun meq/shell nil (interactive)
     (if meq/var/last-buffer
-        (progn (switch-to-buffer meq/var/last-buffer) (setq meq/var/last-buffer nil))
+        (progn
+            (meq/switch-to-buffer meq/var/last-buffer)
+            (setq meq/var/last-buffer nil))
         (setq meq/var/last-buffer (buffer-name))
         (if (meq/exwm-p)
-            (if (get-buffer "Alacritty") (switch-to-buffer "Alacritty") (meq/run "alacritty"))
+            (if (get-buffer "Alacritty") (meq/switch-to-buffer "Alacritty") (meq/run "alacritty"))
             (vterm))))
-
-;;;###autoload
-(defun meq/exwm-workspace-switch-to-buffer-advice (func &rest args)
-  "Make the current Emacs window display another buffer."
-  (interactive
-   (let ((inhibit-quit t))
-     ;; Show all buffers
-     (unless exwm-workspace-show-all-buffers
-       (dolist (pair exwm--id-buffer-alist)
-         (with-current-buffer (cdr pair)
-           (when (= ?\s (aref (buffer-name) 0))
-             (let ((buffer-list-update-hook
-                    (remq #'exwm-input--on-buffer-list-update
-                          buffer-list-update-hook)))
-               (rename-buffer (substring (buffer-name) 1)))))))
-     (prog1
-         (with-local-quit
-           (list (get-buffer (read-buffer-to-switch "Switch to buffer: "))))
-       ;; Hide buffers on other workspaces
-       (unless exwm-workspace-show-all-buffers
-         (dolist (pair exwm--id-buffer-alist)
-           (with-current-buffer (cdr pair)
-             (unless (or (eq exwm--frame exwm-workspace--current)
-                         (= ?\s (aref (buffer-name) 0)))
-               (let ((buffer-list-update-hook
-                      (remq #'exwm-input--on-buffer-list-update
-                            buffer-list-update-hook)))
-                 (rename-buffer (concat " " (buffer-name)))))))))))
-  (exwm--log)
-  (when buffer-or-name
-    (with-current-buffer buffer-or-name
-      (if (derived-mode-p 'exwm-mode)
-          ;; EXWM buffer.
-          (if (eq exwm--frame exwm-workspace--current)
-              ;; On the current workspace.
-              (if (not exwm--floating-frame)
-                  (switch-to-buffer buffer-or-name)
-                ;; Select the floating frame.
-                (select-frame-set-input-focus exwm--floating-frame)
-                (select-window (frame-root-window exwm--floating-frame)))
-            ;; On another workspace.
-            (if exwm-layout-show-all-buffers
-                (exwm-workspace-move-window exwm-workspace--current
-                                            exwm--id)
-              (let ((window (get-buffer-window buffer-or-name exwm--frame)))
-                (if window
-                    (set-frame-parameter exwm--frame
-                                         'exwm-selected-window window)
-                  (set-window-buffer (frame-selected-window exwm--frame)
-                                     buffer-or-name)))
-              (exwm-workspace-switch exwm--frame)))
-        ;; Ordinary buffer.
-        (apply func rest)))))
-
-;;;###autoload
-(with-eval-after-load 'exwm
-    (when (meq/exwm-p) (advice-add #'switch-to-buffer :around #'meq/exwm-workspace-switch-to-buffer-advice)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
