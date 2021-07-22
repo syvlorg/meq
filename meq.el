@@ -43,6 +43,7 @@
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
+(defvar meq/var/last-exwm-mode 'line-mode)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -68,8 +69,10 @@
 (defun meq/listtp (list*) (interactive) (and list* (listp list*)))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&utm_medium=web2x&context=3
+;; ;;;###autoload
+;; (defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
 ;;;###autoload
-(defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
+(defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (derived-mode-p 'exwm-mode)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
@@ -546,6 +549,11 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/run (command &optional name) (start-process-shell-command (or name command) nil command))
+
+;; Adapted From: https://github.com/ch11ng/exwm/blob/master/exwm-config.el#L52
+;;;###autoload
+(defun meq/run-interactive (command) (interactive (list (read-shell-command "$ ")))
+    (start-process-shell-command command nil command))
 
 ;; ;;;###autoload
 ;; (defun meq/switch-to-buffer (buffer-or-name) (interactive)
