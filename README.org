@@ -561,7 +561,7 @@ be ignored by `god-execute-with-current-bindings'."
 ;;         (switch-to-buffer buffer-or-name)))
 
 ;;;###autoload
-(defun meq/switch-to-buffer-advice (buffer-or-name)
+(defun meq/switch-to-buffer-advice (func &rest args)
     "Make the current Emacs window display another buffer."
     (interactive
     (let ((inhibit-quit t))
@@ -588,34 +588,37 @@ be ignored by `god-execute-with-current-bindings'."
                                 buffer-list-update-hook)))
                     (rename-buffer (concat " " (buffer-name)))))))))))
     (exwm--log)
-    (when buffer-or-name
-        (with-current-buffer buffer-or-name
-        (if (derived-mode-p 'exwm-mode)
-            ;; EXWM buffer.
-            (if (eq exwm--frame exwm-workspace--current)
-                ;; On the current workspace.
-                (if (not exwm--floating-frame)
-                    (pop-to-buffer-same-window buffer-or-name)
-                    ;; Select the floating frame.
-                    (select-frame-set-input-focus exwm--floating-frame)
-                    (select-window (frame-root-window exwm--floating-frame)))
-                ;; On another workspace.
-                (if exwm-layout-show-all-buffers
-                    (exwm-workspace-move-window exwm-workspace--current
-                                                exwm--id)
-                (let ((window (get-buffer-window buffer-or-name exwm--frame)))
-                    (if window
-                        (set-frame-parameter exwm--frame
-                                            'exwm-selected-window window)
-                    (set-window-buffer (frame-selected-window exwm--frame)
-                                        buffer-or-name)))
-                (exwm-workspace-switch exwm--frame)))
-            ;; Ordinary buffer.
-            (pop-to-buffer-same-window buffer-or-name)))))
+    (let* ((buffer-or-name (car args))
+            (norecord (nth 1 args))
+            (force-same-window (nth 2 args)))
+        (when buffer-or-name
+            (with-current-buffer buffer-or-name
+            (if (derived-mode-p 'exwm-mode)
+                ;; EXWM buffer.
+                (if (eq exwm--frame exwm-workspace--current)
+                    ;; On the current workspace.
+                    (if (not exwm--floating-frame)
+                        (apply func args)
+                        ;; Select the floating frame.
+                        (select-frame-set-input-focus exwm--floating-frame)
+                        (select-window (frame-root-window exwm--floating-frame)))
+                    ;; On another workspace.
+                    (if exwm-layout-show-all-buffers
+                        (exwm-workspace-move-window exwm-workspace--current
+                                                    exwm--id)
+                    (let ((window (get-buffer-window buffer-or-name exwm--frame)))
+                        (if window
+                            (set-frame-parameter exwm--frame
+                                                'exwm-selected-window window)
+                        (set-window-buffer (frame-selected-window exwm--frame)
+                                            buffer-or-name)))
+                    (exwm-workspace-switch exwm--frame)))
+                ;; Ordinary buffer.
+                (apply func args))))))
 
 ;;;###autoload
 (add-hook 'emacs-startup-hook #'(lambda nil (interactive)
-    (advice-add #'switch-to-buffer :override #'meq/switch-to-buffer-advice)))
+    (advice-add #'switch-to-buffer :around #'meq/switch-to-buffer-advice)))
 
 ;;;###autoload
 (defun meq/shell nil (interactive)
