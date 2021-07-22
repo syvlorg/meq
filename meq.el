@@ -67,6 +67,10 @@
 ;;;###autoload
 (defun meq/listtp (list*) (interactive) (and list* (listp list*)))
 
+;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&utm_medium=web2x&context=3
+;;;###autoload
+(defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
@@ -497,7 +501,8 @@ be ignored by `god-execute-with-current-bindings'."
 ;;;###autoload
 (defun meq/reload-emacs nil (interactive)
     (load (concat user-emacs-directory "early-init.el"))
-    (load (concat user-emacs-directory "init.el")))
+    (load (concat user-emacs-directory "init.el"))
+    (with-eval-after-load 'exwm (when (meq/exwm-p) exwm-reset)))
 
 ;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
 (defun meq/rename-current-buffer-file (&optional new-name*)
