@@ -42,6 +42,7 @@
 (defvar meq/var/backup-modal-modes nil)
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
+(defvar meq/var/last-buffer nil)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -537,6 +538,16 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/remove-dot-dirs (list*) (interactive) (--remove (or (string= "." it) (string= ".." it)) list*))
+
+;;;###autoload
+(defun meq/run (command &optional name) (start-process-shell-command (or name command) nil command))
+
+;;;###autoload
+(defun meq/shell nil (interactive)
+    (if meq/var/last-buffer
+        (progn (switch-to-buffer meq/var/last-buffer) (setq meq/var/last-buffer nil))
+        (setq meq/var/last-buffer (buffer-name))
+        (if meq/var/exwm (meq/run "alacritty") (vterm))))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
