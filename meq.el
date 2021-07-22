@@ -552,7 +552,9 @@ be ignored by `god-execute-with-current-bindings'."
     (if meq/var/last-buffer
         (progn (switch-to-buffer meq/var/last-buffer) (setq meq/var/last-buffer nil))
         (setq meq/var/last-buffer (buffer-name))
-        (if (meq/exwm-p) (meq/run "alacritty") (vterm))))
+        (if (meq/exwm-p)
+            (if (get-buffer "Alacritty") (switch-to-buffer "Alacritty") (meq/run "alacritty"))
+            (vterm))))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
