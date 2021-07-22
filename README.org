@@ -592,29 +592,29 @@ be ignored by `god-execute-with-current-bindings'."
             (norecord (nth 1 args))
             (force-same-window (nth 2 args)))
         (when buffer-or-name
-            (with-current-buffer buffer-or-name
-            (if (derived-mode-p 'exwm-mode)
-                ;; EXWM buffer.
-                (if (eq exwm--frame exwm-workspace--current)
-                    ;; On the current workspace.
-                    (if (not exwm--floating-frame)
-                        (apply func args)
-                        ;; Select the floating frame.
-                        (select-frame-set-input-focus exwm--floating-frame)
-                        (select-window (frame-root-window exwm--floating-frame)))
-                    ;; On another workspace.
-                    (if exwm-layout-show-all-buffers
-                        (exwm-workspace-move-window exwm-workspace--current
-                                                    exwm--id)
-                    (let ((window (get-buffer-window buffer-or-name exwm--frame)))
-                        (if window
-                            (set-frame-parameter exwm--frame
-                                                'exwm-selected-window window)
-                        (set-window-buffer (frame-selected-window exwm--frame)
-                                            buffer-or-name)))
-                    (exwm-workspace-switch exwm--frame)))
-                ;; Ordinary buffer.
-                (apply func args))))))
+            (if (get-buffer buffer-or-name) (with-current-buffer buffer-or-name
+                (if (derived-mode-p 'exwm-mode)
+                    ;; EXWM buffer.
+                    (if (eq exwm--frame exwm-workspace--current)
+                        ;; On the current workspace.
+                        (if (not exwm--floating-frame)
+                            (apply func args)
+                            ;; Select the floating frame.
+                            (select-frame-set-input-focus exwm--floating-frame)
+                            (select-window (frame-root-window exwm--floating-frame)))
+                        ;; On another workspace.
+                        (if exwm-layout-show-all-buffers
+                            (exwm-workspace-move-window exwm-workspace--current
+                                                        exwm--id)
+                        (let ((window (get-buffer-window buffer-or-name exwm--frame)))
+                            (if window
+                                (set-frame-parameter exwm--frame
+                                                    'exwm-selected-window window)
+                            (set-window-buffer (frame-selected-window exwm--frame)
+                                                buffer-or-name)))
+                        (exwm-workspace-switch exwm--frame)))
+                    ;; Ordinary buffer.
+                    (apply func args))) (apply func args)))))
 
 ;;;###autoload
 (add-hook 'emacs-startup-hook #'(lambda nil (interactive)
