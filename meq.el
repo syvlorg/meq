@@ -503,7 +503,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/reload-emacs nil (interactive)
     (load (concat user-emacs-directory "early-init.el"))
     (load (concat user-emacs-directory "init.el"))
-    (with-eval-after-load 'exwm (when (meq/exwm-p) exwm-reset)))
+    (with-eval-after-load 'exwm (when (meq/exwm-p) (exwm-reset))))
 
 ;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
 (defun meq/rename-current-buffer-file (&optional new-name*)
@@ -559,6 +559,7 @@ be ignored by `god-execute-with-current-bindings'."
 ;;         (exwm-workspace-switch-to-buffer buffer-or-name)
 ;;         (switch-to-buffer buffer-or-name)))
 
+;; Adapted From: https://github.com/ch11ng/exwm/blob/master/exwm-workspace.el#L978
 ;;;###autoload
 (defun meq/switch-to-buffer-advice (func &rest args)
     "Make the current Emacs window display another buffer."
