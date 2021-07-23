@@ -595,8 +595,8 @@ be ignored by `god-execute-with-current-bindings'."
                     (rename-buffer (concat " " (buffer-name)))))))))))
     (exwm--log)
     (let* ((buffer-or-name (car args))
-            (norecord (nth 1 args))
-            (force-same-window (nth 2 args)))
+            (norecord (cadr args))
+            (force-same-window (caddr args)))
         (when buffer-or-name
             (if (get-buffer buffer-or-name) (with-current-buffer buffer-or-name
                 (if (derived-mode-p 'exwm-mode)
