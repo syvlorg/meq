@@ -72,6 +72,9 @@
 ;;;###autoload
 (defun meq/exwm-p nil (interactive) (with-eval-after-load 'exwm (frame-parameter (selected-frame) 'exwm-active)))
 
+;;;###autoload
+(defun meq/xwinp nil (interactive) (with-eval-after-load 'exwm (derived-mode-p 'exwm-mode)))
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
