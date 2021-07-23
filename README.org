@@ -82,6 +82,61 @@
 ;;;###autoload
 (defun meq/xwinp nil (interactive) (with-eval-after-load 'exwm (derived-mode-p 'exwm-mode)))
 
+;; Adapted From: https://kitchingroup.cheme.cmu.edu/blog/2015/03/19/Restarting-org-babel-sessions-in-org-mode-more-effectively/
+;;;###autoload
+(defun meq/org-babel-restart-session-to-point (&optional arg)
+  "Restart session up to the src-block in the current point.
+Goes to beginning of buffer and executes each code block with
+`org-babel-execute-src-block' that has the same language and
+session as the current block. ARG has same meaning as in
+`org-babel-execute-src-block'."
+  (interactive "P")
+  (with-eval-after-load 'org (unless (org-in-src-block-p)
+    (error "You must be in a src-block to run this command"))
+  (let* ((current-point (point-marker))
+         (info (org-babel-get-src-block-info))
+         (lang (nth 0 info))
+         (params (nth 2 info))
+         (session (cdr (assoc :session params))))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward org-babel-src-block-regexp nil t)
+        ;; goto start of block
+        (goto-char (match-beginning 0))
+        (let* ((this-info (org-babel-get-src-block-info))
+               (this-lang (nth 0 this-info))
+               (this-params (nth 2 this-info))
+               (this-session (cdr (assoc :session this-params))))
+            (when
+                (and
+                 (< (point) (marker-position current-point))
+                 (string= lang this-lang)
+                 (src-block-in-session-p session))
+              (org-babel-execute-src-block arg)))
+        ;; move forward so we can find the next block
+        (forward-line))))))
+
+;; Adapted From: https://kitchingroup.cheme.cmu.edu/blog/2015/03/19/Restarting-org-babel-sessions-in-org-mode-more-effectively/
+;;;###autoload
+(defun meq/org-babel-kill-session nil
+  "Kill session for current code block."
+  (interactive)
+  (with-eval-after-load 'org (unless (org-in-src-block-p)
+    (error "You must be in a src-block to run this command"))
+  (save-window-excursion
+    (org-babel-switch-to-session)
+    (kill-buffer))))
+
+;; Adapted From: https://kitchingroup.cheme.cmu.edu/blog/2015/03/19/Restarting-org-babel-sessions-in-org-mode-more-effectively/
+;;;###autoload
+(defun meq/org-babel-remove-result-buffer nil
+  "Remove results from every code block in buffer."
+  (interactive)
+  (with-eval-after-load 'org (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward org-babel-src-block-regexp nil t)
+      (org-babel-remove-result)))))
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
