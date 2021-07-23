@@ -389,8 +389,12 @@
     ;; (if (window-minibuffer-p)
     (if (or (derived-mode-p 'prog-mode)
             (derived-mode-p 'text-mode))
-        (alloy-def :keymaps 'override "RET" 'newline-and-indent)
-        (alloy-def :keymaps 'override "RET" nil))
+        (unless (lookup-key
+                    alloy-override-mode-map
+                    (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+        (when (lookup-key
+                alloy-override-mode-map
+                (naked "RET")) (alloy-def :keymaps 'override "RET" nil)))
     (if (derived-mode-p 'vterm-mode)
         (unless meq/var/all-modal-modes-off (setq meq/var/backup-modal-modes (meq/current-modal-modes t)
                 meq/var/backup-terminal-local-map overriding-terminal-local-map
@@ -400,7 +404,15 @@
             (when (meq/fbatp mode) (ignore-errors (funcall mode 1)))) meq/var/backup-modal-modes)
             (setq meq/var/backup-modal-modes nil
                 meq/var/all-modal-modes-off nil
-                overriding-terminal-local-map meq/var/backup-terminal-local-map))))
+                overriding-terminal-local-map meq/var/backup-terminal-local-map)))
+    (when (meq/exwm-p) (if (or
+                            (meq/current-modal-modes)
+                            (not (meq/xwinp))
+                            overriding-terminal-local-map
+                            deino-curr-map
+                            hydra-curr-map)
+        (unless (eq exwm--input-mode 'line-mode) (exwm-input-grab-keyboard exwm--id))
+        (unless (eq exwm--input-mode 'char-mode) (exwm-input-release-keyboard exwm--id)))))
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
