@@ -709,6 +709,28 @@ be ignored by `god-execute-with-current-bindings'."
             (vterm))))
 
 ;;;###autoload
+(defun meq/test nil (interactive) (message (meq/timestamp)))
+
+;;;###autoload
+(defun meq/which-key-change (keymap key name) (interactive)
+    (which-key-add-keymap-based-replacements keymap key (cons name nil)))
+
+;;;###autoload
+(defun meq/which-key-change-ryo (key name) (interactive)
+    (with-eval-after-load 'ryo-modal
+        (meq/which-key-change ryo-modal-mode-map key name)))
+
+;;;###autoload
+(add-hook 'after-init-hook #'(lambda nil (interactive) (meq/which-key-change-ryo ";" "meq")))
+
+;;;###autoload
+(defun meq/which-key-change-sorrow (key name) (interactive)
+    (with-eval-after-load 'sorrow
+        (meq/which-key-change sorrow-mode-map key name)))
+
+;;;###autoload
+
+;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
     (aiern-ex-define-cmd cmd function))))
