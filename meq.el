@@ -331,19 +331,6 @@ session as the current block. ARG has same meaning as in
     (when include-ignored (setq meq/var/all-modal-modes-off t))
     (cosmoem-hide-all-modal-modes keymap include-ignored))
 
-;; Answer: https://stackoverflow.com/a/14490054/10827766
-;; User: https://stackoverflow.com/users/1600898/user4815162342
-;;;###autoload
-(defun meq/keymap-symbol (keymap)
-    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
-    (interactive)
-    (catch 'gotit
-        (mapatoms (lambda (sym)
-            (and (boundp sym)
-                (eq (symbol-value sym) keymap)
-                (not (eq sym 'keymap))
-                (throw 'gotit sym))))))
-
 ;; Adapted From:
 ;; Answer: https://superuser.com/a/331662/1154755
 ;; User: https://superuser.com/users/656734/phimuemue
@@ -704,9 +691,35 @@ be ignored by `god-execute-with-current-bindings'."
 ;;;###autoload
 (defun meq/test nil (interactive) (message (meq/timestamp)))
 
+;; Answer: https://stackoverflow.com/a/14490054/10827766
+;; User: https://stackoverflow.com/users/1600898/user4815162342
+;;;###autoload
+(defun meq/keymap-symbol (keymap)
+    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+    (interactive)
+    (catch 'gotit
+        (mapatoms (lambda (sym)
+            (and (boundp sym)
+                (eq (symbol-value sym) keymap)
+                (not (eq sym 'keymap))
+                (throw 'gotit sym))))))
+
 ;;;###autoload
 (defun meq/which-key-change (keymap key name) (interactive)
-    (which-key-add-keymap-based-replacements keymap key (cons name nil)))
+    (let* ((keys (split-string key " "))
+            (super-lookup (concat
+                (string-join (mapcar #'(lambda (key) (interactive) "(lookup-key") keys) " ")
+                " "
+                (symbol-name (meq/keymap-symbol keymap))
+                " "
+                (string-join (mapcar #'(lambda (key) (interactive) (concat "\"" key "\"" ")")) keys) " "))))
+        (which-key-add-keymap-based-replacements keymap key (cons
+            name
+
+            ;; Adapted From:
+            ;; Answer: https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string
+            ;; User: https://emacs.stackexchange.com/users/2355/constantine
+            (eval (car (read-from-string (format "(progn %s)" super-lookup))))))))
 
 ;;;###autoload
 (defun meq/which-key-change-ryo (key name) (interactive)
