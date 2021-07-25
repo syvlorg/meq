@@ -50,7 +50,6 @@
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
-(defvar meq/var/last-exwm-mode 'line-mode)
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -714,12 +713,19 @@ be ignored by `god-execute-with-current-bindings'."
 ;;;###autoload
 (defun meq/which-key-change (keymap key name) (interactive)
     (let* ((keys (split-string key " "))
+            (keymap-name (symbol-name (meq/keymap-symbol keymap)))
+            (keymap-keyword (intern (concat ":" keymap-name)))
+
+            ;; Adapted From:
+            ;; Answer: https://emacs.stackexchange.com/questions/30864/relocating-an-anonymous-prefix-keymap
+            ;; User: https://emacs.stackexchange.com/users/8528/ivan
             (super-lookup (concat
                 (string-join (mapcar #'(lambda (key) (interactive) "(lookup-key") keys) " ")
                 " "
-                (symbol-name (meq/keymap-symbol keymap))
+                keymap-name
                 " "
                 (string-join (mapcar #'(lambda (key) (interactive) (concat "\"" key "\"" ")")) keys) " "))))
+
         (which-key-add-keymap-based-replacements keymap key (cons
             name
 
@@ -734,14 +740,12 @@ be ignored by `god-execute-with-current-bindings'."
         (meq/which-key-change ryo-modal-mode-map key name)))
 
 ;;;###autoload
-(add-hook 'after-init-hook #'(lambda nil (interactive) (meq/which-key-change-ryo ";" "meq")))
+(meq/which-key-change-ryo ";" "meq")
 
 ;;;###autoload
 (defun meq/which-key-change-sorrow (key name) (interactive)
     (with-eval-after-load 'sorrow
         (meq/which-key-change sorrow-mode-map key name)))
-
-;;;###autoload
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
