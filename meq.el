@@ -719,13 +719,14 @@ be ignored by `god-execute-with-current-bindings'."
                 " "
                 (string-join (mapcar #'(lambda (key) (interactive) (concat "\"" key "\"" ")")) keys) " "))))
 
-        (which-key-add-keymap-based-replacements keymap key (cons
-            name
+        (add-hook 'after-init-hook #'(lambda nil (interactive)
+            (which-key-add-keymap-based-replacements keymap key (cons
+                name
 
-            ;; Adapted From:
-            ;; Answer: https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string
-            ;; User: https://emacs.stackexchange.com/users/2355/constantine
-            (eval (car (read-from-string (format "(progn %s)" super-lookup))))))))
+                ;; Adapted From:
+                ;; Answer: https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string
+                ;; User: https://emacs.stackexchange.com/users/2355/constantine
+                (eval (car (read-from-string (format "(progn %s)" super-lookup))))))))))
 
 ;;;###autoload
 (defun meq/which-key-change-ryo (key name) (interactive)
