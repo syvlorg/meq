@@ -404,7 +404,8 @@ session as the current block. ARG has same meaning as in
                 (when which-key-persistent-popup (which-key--create-buffer-and-show nil current-map nil "Current bindings")))))
         (if (which-key--popup-showing-p)
             (when keymap (funcall which-key-function))
-            (funcall which-key-function))))
+            (funcall which-key-function))
+        (setq meq/var/current-top-level-map nil)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/14956/31428
@@ -424,6 +425,19 @@ session as the current block. ARG has same meaning as in
 (defun meq/current-modal-modes (&optional include-ignored) (interactive)
     (-filter #'(lambda (mode) (interactive) (eval `(bound-and-true-p ,mode)))
         (append (when include-ignored meq/var/ignored-modal-modes) meq/var/modal-modes)))
+
+;; Answer: https://stackoverflow.com/a/14490054/10827766
+;; User: https://stackoverflow.com/users/1600898/user4815162342
+;;;###autoload
+(defun meq/keymap-symbol (keymap)
+    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
+    (interactive)
+    (catch 'gotit
+        (mapatoms (lambda (sym)
+            (and (boundp sym)
+                (eq (symbol-value sym) keymap)
+                (not (eq sym 'keymap))
+                (throw 'gotit sym))))))
 
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
@@ -689,19 +703,6 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/test nil (interactive) (message (meq/timestamp)))
-
-;; Answer: https://stackoverflow.com/a/14490054/10827766
-;; User: https://stackoverflow.com/users/1600898/user4815162342
-;;;###autoload
-(defun meq/keymap-symbol (keymap)
-    "Return the symbol to which KEYMAP is bound, or nil if no such symbol exists."
-    (interactive)
-    (catch 'gotit
-        (mapatoms (lambda (sym)
-            (and (boundp sym)
-                (eq (symbol-value sym) keymap)
-                (not (eq sym 'keymap))
-                (throw 'gotit sym))))))
 
 ;;;###autoload
 (defun meq/which-key-change (keymap key name) (interactive)
