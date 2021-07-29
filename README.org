@@ -364,7 +364,8 @@ session as the current block. ARG has same meaning as in
                 (meq/which-key-show-top-level keymap)))))
         (if meq/var/which-key-really-dont-show
             (when force (setq meq/var/which-key-really-dont-show nil) (funcall show-popup keymap))
-            (funcall show-popup keymap))))
+            (funcall show-popup keymap))
+        (setq meq/var/all-keymaps-map nil)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (mapc #'(lambda (state) (interactive)
