@@ -688,8 +688,7 @@ be ignored by `god-execute-with-current-bindings'."
                     (apply func args))) (apply func args)))))
 
 ;;;###autoload
-(add-hook 'emacs-startup-hook #'(lambda nil (interactive)
-    (advice-add #'switch-to-buffer :around #'meq/switch-to-buffer-advice)))
+(when (meq/exwm-p) (advice-add #'switch-to-buffer :around #'meq/switch-to-buffer-advice))
 
 ;;;###autoload
 (defun meq/shell nil (interactive)
