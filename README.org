@@ -32,7 +32,6 @@
 
 ;;; Code:
 
-(require 'cosmoem)
 (require 'naked)
 (require 'janus)
 
@@ -60,6 +59,9 @@
   "Convert KEYWORD to symbol."
   (substring (symbol-name keyword) 1))
 
+;;;###autoload
+(defun meq/inconcat (&rest strings) (intern (apply #'concat strings)))
+
 ;; Adapted From:
 ;; Answer: https://stackoverflow.com/a/10088995/10827766
 ;; User: https://stackoverflow.com/users/324105/phils
@@ -70,6 +72,9 @@
             (eval `(bound-and-true-p ,mode))
             ;; (or (fboundp mode) (functionp mode))
             ) mode)))
+
+;;;###autoload
+(defun meq/ncp nil (interactive) (and (meq/fbatp 'native-comp-available-p) (native-comp-available-p)))
 
 ;;;###autoload
 (defun meq/listtp (list*) (interactive) (and list* (listp list*)))
@@ -335,7 +340,7 @@ session as the current block. ARG has same meaning as in
                     (ignore-errors (funcall mode-symbol 1)))))
             meq/var/ignored-modal-modes)
     (when include-ignored (setq meq/var/all-modal-modes-off t))
-    (cosmoem-hide-all-modal-modes keymap include-ignored))
+    (with-eval-after-load 'cosmoem (cosmoem-hide-all-modal-modes keymap include-ignored)))
 
 ;; Adapted From:
 ;; Answer: https://superuser.com/a/331662/1154755
@@ -748,6 +753,14 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/which-key-change-sorrow (key name) (interactive)
     (with-eval-after-load 'sorrow
         (meq/which-key-change sorrow-mode-map key name)))
+
+;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&utm_medium=web2x&context=3
+;; And: https://github.com/raxod502/straight.el#updating-recipe-repositories
+(defun meq/straight-upgrade nil (interactive)
+    (with-eval-after-load 'straight (straight-pull-all)
+    (straight-merge-all)
+    (straight-freeze-versions))
+    (with-eval-after-load 'restart-emacs (restart-emacs)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
