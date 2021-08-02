@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'naked)
-(require 'janus)
 
 (defvar meq/var/modal-modes nil)
 (defvar meq/var/ignored-modal-modes nil)
@@ -367,16 +366,16 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (with-eval-after-load 'aiern (mapc #'(lambda (state) (interactive)
-    (add-hook (intern (concat "aiern-" (symbol-name (car state)) "-state-entry-hook"))
+    (add-hook (meq/inconcat "aiern-" (symbol-name (car state)) "-state-entry-hook")
         #'(lambda nil (interactive)
-            (meq/which-key--show-popup (intern (concat "aiern-" (symbol-name (car state)) "-state-map")))))
-    (add-hook (intern (concat "aiern-" (symbol-name (car state)) "-state-exit-hook"))
+            (meq/which-key--show-popup (meq/inconcat "aiern-" (symbol-name (car state)) "-state-map"))))
+    (add-hook (meq/inconcat "aiern-" (symbol-name (car state)) "-state-exit-hook")
         #'(lambda nil (interactive)
             (meq/which-key--show-popup)))
-    (add-hook (intern (concat "evil-" (symbol-name (car state)) "-state-entry-hook"))
+    (add-hook (meq/inconcat "evil-" (symbol-name (car state)) "-state-entry-hook")
         #'(lambda nil (interactive)
-            (meq/which-key--show-popup (intern (concat "evil-" (symbol-name (car state)) "-state-map")))))
-    (add-hook (intern (concat "evil-" (symbol-name (car state)) "-state-exit-hook"))
+            (meq/which-key--show-popup (meq/inconcat "evil-" (symbol-name (car state)) "-state-map"))))
+    (add-hook (meq/inconcat "evil-" (symbol-name (car state)) "-state-exit-hook")
         #'(lambda nil (interactive)
             (meq/which-key--show-popup))))
     aiern-state-properties))
@@ -713,7 +712,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/which-key-change (keymap key name) (interactive)
     (let* ((keys (split-string key " "))
             (keymap-name (symbol-name (meq/keymap-symbol keymap)))
-            (keymap-keyword (intern (concat ":" keymap-name)))
+            (keymap-keyword (meq/inconcat ":" keymap-name))
 
             ;; Adapted From:
             ;; Answer: https://emacs.stackexchange.com/questions/30864/relocating-an-anonymous-prefix-keymap
