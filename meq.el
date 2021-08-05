@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'naked)
+(require 'thingatpt)
 
 (defvar meq/var/modal-modes nil)
 (defvar meq/var/ignored-modal-modes nil)
@@ -41,6 +42,9 @@
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
+
+;;;###autoload
+(defun meq/ued (&rest args) (apply #'concat user-emacs-directory args))
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
@@ -147,7 +151,7 @@ session as the current block. ARG has same meaning as in
                 (or (org-at-heading-p)
                     (org-at-item-p))
                 outline-on-heading-p)
-            (invisible-p (point-at-eol))))
+            (invisible-p (point-at-eol)))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/37791/31428
@@ -180,14 +184,6 @@ session as the current block. ARG has same meaning as in
     (with-eval-after-load 'org 
         (cl-letf (((symbol-function 'delete-file) #'ignore))
             (org-babel-tangle '(4)))))
-
-;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
-;; User: https://emacs.stackexchange.com/users/2370/tobias
-;;;###autoload
-(defun meq/org-babel-tangle-append-setup nil
-    "Add key-binding C-c C-v C-t for `meq/org-babel-tangle-append'."
-    (with-eval-after-load 'org (org-defkey org-mode-map (naked "C-c C-v +") 'meq/org-babel-tangle-append)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
@@ -258,8 +254,52 @@ session as the current block. ARG has same meaning as in
             ret))))))
 
 ;;;###autoload
+(defun meq/get-tangled-file-name (&optional file*) (interactive)
+    (with-current-buffer (get-file-buffer (or file* buffer-file-name))
+
+        ;; Adapted From:
+        ;; Answer: https://emacs.stackexchange.com/a/24521/31428
+        ;; User: https://emacs.stackexchange.com/users/12616/konstantin-morenko
+        (goto-line 1)
+
+        ;; Adapted From:
+        ;; Answer: https://emacs.stackexchange.com/a/15136/31428
+        ;; User: https://emacs.stackexchange.com/users/253/dan
+        (let* ((line (thing-at-point 'line))
+
+                (split-line (split-string line ":")))
+            (expand-file-name (cadr split-line)))))
+
+;;;###autoload
+(defun meq/org-babel-detangle-and-return (&optional file* origin*) (interactive)
+    (with-eval-after-load 'org
+        (save-current-buffer
+            (let* ((file (or file* buffer-file-name))
+                    (origin (or origin* (meq/get-tangled-file-name file))))
+                (org-babel-detangle file)
+                (set-buffer (get-file-buffer origin))
+                (write-file origin)
+                (kill-buffer (get-file-buffer origin))
+                (when (meq/fbatp winner-mode) (winner-undo))))))
+
+;;;###autoload
+(defun meq/generate-obdar (file)
+    (add-hook 'after-save-hook #'(lambda nil (interactive)
+        (when (eq (get-file-buffer file) (current-buffer))
+            (meq/org-babel-detangle-and-return file)))))
+
+;;;###autoload
+(defun meq/moff (mode) (if (meq/fbatp mode) 0 1))
+
+;;;###autoload
+(defun meq/after-init nil (interactive)
+    (with-eval-after-load 'writeroom-mode (writeroom-mode (meq/moff writeroom-mode))))
+
+;;;###autoload
 (defun meq/src-mode-settings nil (interactive)
-    (with-eval-after-load 'org (meq/disable-all-modal-modes) (when (featurep 'focus) (focus-mode 1))))
+    (with-eval-after-load 'org (meq/disable-all-modal-modes)
+        ;; (with-eval-after-load 'focus (focus-mode 1))
+        (meq/after-init)))
 ;;;###autoload
 (defun meq/src-mode-exit nil (interactive)
     (with-eval-after-load 'org (when (featurep 'winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
@@ -304,7 +344,7 @@ session as the current block. ARG has same meaning as in
                 ((derived-mode-p 'latex-mode)
                 (LaTeX-narrow-to-environment))
                 (t (narrow-to-defun)))
-            (meq/src-mode-settings))))
+            (meq/src-mode-settings)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/42240
@@ -752,7 +792,7 @@ be ignored by `god-execute-with-current-bindings'."
     (with-eval-after-load 'straight (straight-pull-all)
     (straight-merge-all)
     (straight-freeze-versions))
-    (with-eval-after-load 'restart-emacs (restart-emacs)))
+    (unless (daemonp) (with-eval-after-load 'restart-emacs (restart-emacs))))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
