@@ -505,14 +505,15 @@ session as the current block. ARG has same meaning as in
             (setq meq/var/backup-modal-modes nil
                 meq/var/all-modal-modes-off nil
                 overriding-terminal-local-map meq/var/backup-terminal-local-map)))
-    (when (meq/exwm-p) (if (or
-                            (meq/current-modal-modes)
-                            (not (meq/xwinp))
-                            overriding-terminal-local-map
-                            deino-curr-map
-                            hydra-curr-map)
-        (unless (eq exwm--input-mode 'line-mode) (exwm-input-grab-keyboard exwm--id))
-        (unless (eq exwm--input-mode 'char-mode) (exwm-input-release-keyboard exwm--id)))))
+    ;; (when (meq/exwm-p) (if (or
+    ;;                         (meq/current-modal-modes)
+    ;;                         (not (meq/xwinp))
+    ;;                         overriding-terminal-local-map
+    ;;                         deino-curr-map
+    ;;                         hydra-curr-map)
+    ;;     (unless (eq exwm--input-mode 'line-mode) (exwm-input-grab-keyboard exwm--id))
+    ;;     (unless (eq exwm--input-mode 'char-mode) (exwm-input-release-keyboard exwm--id))))
+        )
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
@@ -738,7 +739,15 @@ be ignored by `god-execute-with-current-bindings'."
                     (apply func args))) (apply func args)))))
 
 ;;;###autoload
-(when (meq/exwm-p) (advice-add #'switch-to-buffer :around #'meq/switch-to-buffer-advice))
+(when (meq/exwm-p)
+    (advice-add #'switch-to-buffer :around #'meq/switch-to-buffer-advice)
+    (advice-add #'switch-to-buffer :after #'(lambda nil (interactive)
+                                                (set-frame-size
+                                                    selected-frame
+                                                    ;; meq/var/initial-frame-width
+                                                    (x-display-pixel-width)
+                                                    ;; meq/var/initial-frame-height
+                                                    (x-display-pixel-height)))))
 
 ;;;###autoload
 (defun meq/shell nil (interactive)
