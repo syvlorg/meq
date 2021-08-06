@@ -42,6 +42,7 @@
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
+(defvar meq/var/winconf-before-wk nil)
 
 ;;;###autoload
 (defun meq/ued (&rest args) (apply #'concat user-emacs-directory args))
@@ -302,7 +303,7 @@ session as the current block. ARG has same meaning as in
         (meq/after-init)))
 ;;;###autoload
 (defun meq/src-mode-exit nil (interactive)
-    (with-eval-after-load 'org (when (featurep 'winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
+    (with-eval-after-load 'org (when (meq/fbatp winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
 
 ;; Adapted From: https://github.com/syl20bnr/spacemacs/issues/13058#issuecomment-565741009
 ;;;###autoload
@@ -389,7 +390,9 @@ session as the current block. ARG has same meaning as in
         (unless dont-disable-modal-modes (meq/disable-all-modal-modes))
         (setq which-key-persistent-popup nil)
         (which-key--hide-popup)
-        (which-key-mode -1))
+        (which-key-mode -1)
+        ;; (when (meq/fbatp winner-mode) (winner-set-conf ( meq/var/winconf-before-wk)))
+        (when (meq/fbatp winner-mode) (winner-undo)))
 
 ;;;###autoload
 (defun meq/which-key--show-popup (&optional keymap force disable-modal-modes) (interactive)
@@ -399,6 +402,7 @@ session as the current block. ARG has same meaning as in
             (if disable-modal-modes
                 (meq/disable-all-modal-modes keymap)
                 (meq/which-key-show-top-level keymap)))))
+        ;; (when (meq/fbatp winner-mode) (setq meq/var/winconf-before-wk (winner-conf)))
         (if meq/var/which-key-really-dont-show
             (when force (setq meq/var/which-key-really-dont-show nil) (funcall show-popup keymap))
             (funcall show-popup keymap))
@@ -739,7 +743,7 @@ be ignored by `god-execute-with-current-bindings'."
                     (apply func args))) (apply func args)))))
 
 ;;;###autoload
-(when (meq/exwm-p) (add-hook 'exwm-init-hook #'(lambda nil (interactive) (advice-add
+(with-eval-after-load 'exwm (add-hook 'exwm-init-hook #'(lambda nil (interactive) (advice-add
                                                                             #'switch-to-buffer
                                                                             :around
                                                                             #'meq/switch-to-buffer-advice))))
