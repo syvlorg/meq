@@ -505,14 +505,15 @@ session as the current block. ARG has same meaning as in
             (setq meq/var/backup-modal-modes nil
                 meq/var/all-modal-modes-off nil
                 overriding-terminal-local-map meq/var/backup-terminal-local-map)))
-    (when (meq/exwm-p) (if (or
-                            (meq/current-modal-modes)
-                            (not (meq/xwinp))
-                            overriding-terminal-local-map
-                            deino-curr-map
-                            hydra-curr-map)
-        (unless (eq exwm--input-mode 'line-mode) (exwm-input-grab-keyboard exwm--id))
-        (unless (eq exwm--input-mode 'char-mode) (exwm-input-release-keyboard exwm--id)))))
+    ;; (when (meq/exwm-p) (if (or
+    ;;                         (meq/current-modal-modes)
+    ;;                         (not (meq/xwinp))
+    ;;                         overriding-terminal-local-map
+    ;;                         deino-curr-map
+    ;;                         hydra-curr-map)
+    ;;     (unless (eq exwm--input-mode 'line-mode) (exwm-input-grab-keyboard exwm--id))
+    ;;     (unless (eq exwm--input-mode 'char-mode) (exwm-input-release-keyboard exwm--id))))
+        )
 ;;;###autoload
 (add-hook 'pre-command-hook 'meq/pre-post-command-hook-command)
 ;;;###autoload
