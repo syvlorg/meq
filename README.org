@@ -50,6 +50,7 @@
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
 (defvar meq/var/winconf-before-wk nil)
+(defvar meq/var/which-key-first-show t)
 
 ;;;###autoload
 (defun meq/ued (&rest args) (apply #'concat user-emacs-directory args))
@@ -399,7 +400,23 @@ session as the current block. ARG has same meaning as in
         (which-key--hide-popup)
         (which-key-mode -1)
         ;; (when (meq/fbatp winner-mode) (winner-set-conf ( meq/var/winconf-before-wk)))
-        (when (meq/fbatp winner-mode) (winner-undo)))
+        ;; (when (meq/fbatp winner-mode) (winner-undo))
+        (when meq/var/which-key-first-show
+            (delete-window (other-window -1))
+            (setq meq/var/which-key-first-show nil)))
+
+;; Adapted From: https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/cxb78ul?utm_source=share&utm_medium=web2x&context=3
+;; More Information Here: https://www.gnu.org/software/emacs/manual/html_node/elisp/Display-Tables.html
+;;;###autoload
+(defun meq/window-divider nil
+  (let ((display-table (or buffer-display-table standard-display-table)))
+    (set-display-table-slot display-table 0 ? )
+    (set-display-table-slot display-table 1 ? )
+    (set-display-table-slot display-table 5 ? )
+    (set-window-display-table (selected-window) display-table)))
+
+;;;###autoload
+(add-hook 'window-configuration-change-hook #'meq/window-divider)
 
 ;;;###autoload
 (defun meq/which-key--show-popup (&optional keymap force disable-modal-modes) (interactive)
