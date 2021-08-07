@@ -42,7 +42,6 @@
 (defvar meq/var/backup-terminal-local-map nil)
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
-(defvar meq/var/winconf-before-wk nil)
 (defvar meq/var/which-key-first-show t)
 
 ;;;###autoload
@@ -392,9 +391,7 @@ session as the current block. ARG has same meaning as in
         (setq which-key-persistent-popup nil)
         (which-key--hide-popup)
         (which-key-mode -1)
-        ;; (when (meq/fbatp winner-mode) (winner-set-conf ( meq/var/winconf-before-wk)))
-        ;; (when (meq/fbatp winner-mode) (winner-undo))
-        (when meq/var/which-key-first-show
+        (when (and (which-key--popup-showing-p) meq/var/which-key-first-show)
             (delete-window (other-window -1))
             (setq meq/var/which-key-first-show nil)))
 
@@ -419,7 +416,6 @@ session as the current block. ARG has same meaning as in
             (if disable-modal-modes
                 (meq/disable-all-modal-modes keymap)
                 (meq/which-key-show-top-level keymap)))))
-        ;; (when (meq/fbatp winner-mode) (setq meq/var/winconf-before-wk (winner-conf)))
         (if meq/var/which-key-really-dont-show
             (when force (setq meq/var/which-key-really-dont-show nil) (funcall show-popup keymap))
             (funcall show-popup keymap))
@@ -448,7 +444,7 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/toggle-which-key (&optional keymap) (interactive)
-    (if (any-popup-showing-p)
+    (if (cosmoem-any-popup-showing-p)
         (meq/which-key--hide-popup t)
         (meq/which-key--show-popup keymap t)
         ;; (meq/which-key-show-top-level keymap)
