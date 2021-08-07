@@ -307,7 +307,8 @@ session as the current block. ARG has same meaning as in
 (defun meq/src-mode-settings nil (interactive)
     (with-eval-after-load 'org (meq/disable-all-modal-modes)
         ;; (with-eval-after-load 'focus (focus-mode 1))
-        (meq/after-init)))
+        ;; (meq/after-init)
+        ))
 ;;;###autoload
 (defun meq/src-mode-exit nil (interactive)
     (with-eval-after-load 'org (when (meq/fbatp winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
