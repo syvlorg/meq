@@ -288,7 +288,7 @@ session as the current block. ARG has same meaning as in
                 (set-buffer (get-file-buffer origin))
                 (write-file origin)
                 (kill-buffer (get-file-buffer origin))
-                (when (meq/fbatp winner-mode) (winner-undo))))))
+                (delete-window (other-window -1))))))
 
 ;;;###autoload
 (defun meq/generate-obdar (file)
@@ -305,13 +305,9 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/src-mode-settings nil (interactive)
-    (with-eval-after-load 'org (meq/disable-all-modal-modes)
-        ;; (with-eval-after-load 'focus (focus-mode 1))
-        ;; (meq/after-init)
-        ))
+    (with-eval-after-load 'org (meq/disable-all-modal-modes) (meq/after-init)))
 ;;;###autoload
-(defun meq/src-mode-exit nil (interactive)
-    (with-eval-after-load 'org (when (meq/fbatp winner-mode) (winner-undo)) (meq/disable-all-modal-modes)))
+(defun meq/src-mode-exit nil (interactive) (with-eval-after-load 'org (meq/disable-all-modal-modes)))
 
 ;; Adapted From: https://github.com/syl20bnr/spacemacs/issues/13058#issuecomment-565741009
 ;;;###autoload
