@@ -466,6 +466,34 @@ session as the current block. ARG has same meaning as in
             (funcall which-key-function))
         (setq meq/var/current-top-level-map nil)))
 
+;; Adapted From: https://github.com/justbur/emacs-which-key/blob/master/which-key.el#L1766
+(defun which-key--get-keymap-bindings-advice
+    (keymap &optional start prefix filter all evil aiern)
+  "Retrieve top-level bindings from KEYMAP.
+PREFIX limits bindings to those starting with this key
+sequence. START is a list of existing bindings to add to.  If ALL
+is non-nil, recursively retrieve all bindings below PREFIX. If
+EVIL is non-nil, extract active evil bidings; if AIERN is non-nil,
+extract active aiern bidings."
+  (let ((bindings start)
+        (ignore '(self-insert-command ignore ignore-event company-ignore))
+        (evil-map
+         (when (and evil (bound-and-true-p evil-local-mode))
+           (lookup-key keymap (kbd (format "<%s-state>" evil-state)))))
+        (aiern-map
+         (when (and aiern (bound-and-true-p aiern-local-mode))
+           (lookup-key keymap (kbd (format "<%s-state>" aiern-state))))))
+    (when (keymapp evil-map)
+      (setq bindings (which-key--get-keymap-bindings-1
+                      evil-map bindings prefix filter all ignore)))
+    (when (keymapp aiern-map)
+      (setq bindings (which-key--get-keymap-bindings-1
+                      aiern-map bindings prefix filter all ignore)))
+    (which-key--get-keymap-bindings-1
+     keymap bindings prefix filter all ignore)))
+
+(advice-add #'which-key--get-keymap-bindings :override #'which-key--get-keymap-bindings-advice)
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/14956/31428
 ;; User: https://emacs.stackexchange.com/users/25/gilles-so-stop-being-evil
