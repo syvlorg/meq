@@ -840,11 +840,20 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&utm_medium=web2x&context=3
 ;; And: https://github.com/raxod502/straight.el#updating-recipe-repositories
+;;;###autoload
 (defun meq/straight-upgrade nil (interactive)
     (with-eval-after-load 'straight (straight-pull-all)
     (straight-merge-all)
     (straight-freeze-versions))
     (unless (daemonp) (with-eval-after-load 'restart-emacs (restart-emacs))))
+
+;;;###autoload
+(defmacro meq/with-ymm (&rest args)
+    (with-eval-after-load 'yasnippet (yas-minor-mode 1) (eval `(progn ,@args)) (yas-minor-mode 0)))
+
+;;;###autoload
+(defun meq/insert-snippet (name)
+    (with-eval-after-load 'yasnippet (eval `(meq/with-ymm (yas-expand-snippet (yas-lookup-snippet ,name))))))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
