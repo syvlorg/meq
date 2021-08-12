@@ -276,18 +276,34 @@ session as the current block. ARG has same meaning as in
     (with-eval-after-load 'org
         (save-current-buffer
             (let* ((file (or file* buffer-file-name))
-                    (origin (or origin* (meq/get-tangled-file-name file))))
+                    (origin (or origin* (meq/get-tangled-file-name file)))
+                    (origin-buffer (get-file-buffer origin)))
                 (org-babel-detangle file)
-                (set-buffer (get-file-buffer origin))
-                (write-file origin)
-                (kill-buffer (get-file-buffer origin))
-                (delete-window (other-window -1))))))
+                (when origin-buffer
+                    (set-buffer origin-buffer)
+                    (write-file origin)
+                    (kill-buffer origin-buffer))
+
+                ;; Adapted From:
+                ;; Answer: https://stackoverflow.com/a/44049569/10827766
+                ;; User: https://stackoverflow.com/users/2876504/alejandro-c
+                (delete-window (previous-window))))))
 
 ;;;###autoload
-(defun meq/generate-obdar (file)
+(defun meq/org-babel-detangle-kill-and-return (file &optional origin) (interactive)
+    (let* ((file-buffer (get-file-buffer file)))
+        (meq/org-babel-detangle-and-return file origin)
+        (when file-buffer (kill-buffer file-buffer))))
+
+;;;###autoload
+(add-hook 'after-init-hook #'(lambda nil (interactive) (advice-add #'customize-save-variable :after #'(lambda (&rest args) (interactive)
+    (meq/org-babel-detangle-kill-and-return (meq/ued "init.el") (meq/ued "README.org"))))))
+
+;;;###autoload
+(defun meq/generate-obdar (file &optional origin)
     (add-hook 'after-save-hook #'(lambda nil (interactive)
         (when (eq (get-file-buffer file) (current-buffer))
-            (meq/org-babel-detangle-and-return file)))))
+            (meq/org-babel-detangle-and-return file origin)))))
 
 ;;;###autoload
 (defun meq/moff (mode) (if (meq/fbatp mode) 0 1))
@@ -389,7 +405,11 @@ session as the current block. ARG has same meaning as in
     (which-key--hide-popup)
     (which-key-mode -1)
     (when (and (which-key--popup-showing-p) meq/var/which-key-first-show)
-        (delete-window (other-window -1))
+        ;; Adapted From:
+        ;; Answer: https://stackoverflow.com/a/44049569/10827766
+        ;; User: https://stackoverflow.com/users/2876504/alejandro-c
+        (delete-window (previous-window))
+
         (setq meq/var/which-key-first-show nil)))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/cxb78ul?utm_source=share&utm_medium=web2x&context=3
@@ -526,13 +546,6 @@ extract active aiern bidings."
                 (not (eq sym 'keymap))
                 (throw 'gotit sym))))))
 
-(defmacro meq/rainbow-conditions (a b)
-    (and
-        (string= meq/var/current-theme-mode (symbol-name a))
-        (eval `(=
-                rainbow-identifiers-cie-l*a*b*-saturation
-                ,(meq/inconcat "meq/var/rainbow-identifiers-" (symbol-name b))))))
-
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
     ;; (if (window-minibuffer-p)
@@ -555,7 +568,12 @@ extract active aiern bidings."
                 meq/var/all-modal-modes-off nil
                 overriding-terminal-local-map meq/var/backup-terminal-local-map)))
     (with-eval-after-load 'writeroom-mode
-        (unless (and (meq/fbatp writeroom-mode) (or lv-wnd (window-minibuffer-p))) (writeroom-mode 1)))
+        (unless (and (meq/fbatp writeroom-mode) (or
+                                                    lv-wnd
+                                                    (window-minibuffer-p)
+                                                    (which-key--popup-showing-p))) (writeroom-mode 1)))
+    (with-eval-after-load 'olivetti
+        (unless (meq/fbatp olivetti-mode) (olivetti-mode 1)))
     (with-eval-after-load 'rainbow-identifiers
         (unless (meq/fbatp rainbow-identifiers-mode) (rainbow-identifiers-mode 1)))
     ;; (when (meq/exwm-p) (if (or
