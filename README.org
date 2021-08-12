@@ -533,6 +533,13 @@ extract active aiern bidings."
                 (not (eq sym 'keymap))
                 (throw 'gotit sym))))))
 
+(defmacro meq/rainbow-conditions (a b)
+    (and
+        (string= meq/var/current-theme-mode (symbol-name a))
+        (eval `(=
+                rainbow-identifiers-cie-l*a*b*-saturation
+                ,(meq/inconcat "meq/var/rainbow-identifiers-" (symbol-name b))))))
+
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
     ;; (if (window-minibuffer-p)
@@ -554,6 +561,10 @@ extract active aiern bidings."
             (setq meq/var/backup-modal-modes nil
                 meq/var/all-modal-modes-off nil
                 overriding-terminal-local-map meq/var/backup-terminal-local-map)))
+    (with-eval-after-load 'writeroom-mode
+        (unless (and (meq/fbatp writeroom-mode) (or lv-wnd (window-minibuffer-p))) (writeroom-mode 1)))
+    (with-eval-after-load 'rainbow-identifiers
+        (unless (meq/fbatp rainbow-identifiers-mode) (rainbow-identifiers-mode 1)))
     ;; (when (meq/exwm-p) (if (or
     ;;                         (meq/current-modal-modes)
     ;;                         (not (meq/xwinp))
