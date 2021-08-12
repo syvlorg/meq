@@ -399,18 +399,19 @@ session as the current block. ARG has same meaning as in
 ;; User: https://emacs.stackexchange.com/users/2308/kdb
 ;;;###autoload
 (defun meq/which-key--hide-popup (&optional force dont-disable-modal-modes) (interactive)
-    (when force (setq meq/var/which-key-really-dont-show t))
-    (unless dont-disable-modal-modes (meq/disable-all-modal-modes))
-    (setq which-key-persistent-popup nil)
-    (which-key--hide-popup)
-    (which-key-mode -1)
-    (when (and (which-key--popup-showing-p) meq/var/which-key-first-show)
-        ;; Adapted From:
-        ;; Answer: https://stackoverflow.com/a/44049569/10827766
-        ;; User: https://stackoverflow.com/users/2876504/alejandro-c
-        (delete-window (previous-window))
+    (let* ((popup-was-up (which-key--popup-showing-p)))
+        (when force (setq meq/var/which-key-really-dont-show t))
+        (unless dont-disable-modal-modes (meq/disable-all-modal-modes))
+        (setq which-key-persistent-popup nil)
+        (which-key--hide-popup)
+        (which-key-mode -1)
+        (when meq/var/which-key-first-show
+            ;; Adapted From:
+            ;; Answer: https://stackoverflow.com/a/44049569/10827766
+            ;; User: https://stackoverflow.com/users/2876504/alejandro-c
+            (when popup-was-up (delete-window (previous-window)))
 
-        (setq meq/var/which-key-first-show nil)))
+            (setq meq/var/which-key-first-show nil))))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/cxb78ul?utm_source=share&utm_medium=web2x&context=3
 ;; More Information Here: https://www.gnu.org/software/emacs/manual/html_node/elisp/Display-Tables.html
@@ -727,7 +728,7 @@ be ignored by `god-execute-with-current-bindings'."
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/14861/31428
 ;; User: user227
-(defun meq/substring (substring string) (string-match-p (regexp-quote substring) string))
+(defun meq/substring (substring* string) (string-match-p (regexp-quote substring*) string))
 
 ;;;###autoload
 (defun meq/remove-dot-dirs (list*) (interactive) (--remove (or (string= "." it) (string= ".." it)) list*))
