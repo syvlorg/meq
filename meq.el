@@ -574,7 +574,7 @@ extract active aiern bidings."
                                                     (window-minibuffer-p)
                                                     (which-key--popup-showing-p))) (writeroom-mode 1)))
     (with-eval-after-load 'olivetti
-        (unless (meq/fbatp olivetti-mode) (olivetti-mode 1)))
+        (unless (or (meq/xwinp) (meq/fbatp olivetti-mode)) (olivetti-mode 1)))
     (with-eval-after-load 'rainbow-identifiers
         (unless (meq/fbatp rainbow-identifiers-mode) (rainbow-identifiers-mode 1)))
     ;; (when (meq/exwm-p) (if (or
