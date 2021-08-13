@@ -565,7 +565,7 @@ extract active aiern bidings."
         (when (lookup-key
                 alloy-override-mode-map
                 (naked "RET")) (alloy-def :keymaps 'override "RET" nil))))
-    (if (derived-mode-p 'vterm-mode)
+    (if (or (meq/xwinp) (derived-mode-p 'vterm-mode))
         (unless meq/var/all-modal-modes-off (setq meq/var/backup-modal-modes (meq/current-modal-modes t)
                 meq/var/backup-terminal-local-map overriding-terminal-local-map
                 overriding-terminal-local-map vterm-mode-map)
