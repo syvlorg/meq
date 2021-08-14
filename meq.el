@@ -276,12 +276,13 @@ session as the current block. ARG has same meaning as in
     (with-eval-after-load 'org
         (save-current-buffer
             (let* ((file (or file* buffer-file-name))
-                    (origin (or origin* (meq/get-tangled-file-name file)))
-                    (origin-buffer (get-file-buffer origin)))
+                    (origin-buffer (get-file-buffer (or
+                                        origin*
+                                        (meq/get-tangled-file-name file)))))
                 (org-babel-detangle file)
                 (when origin-buffer
                     (set-buffer origin-buffer)
-                    (write-file origin)
+                    (save-buffer)
                     (kill-buffer origin-buffer))
 
                 ;; Adapted From:
