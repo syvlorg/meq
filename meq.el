@@ -915,9 +915,7 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/get-next-in-list (item list)
-    (let* ((index (seq-position list item))) (unwind-protect
-        (nth (1+ index) list)
-        (-remove-at-indices (list index (1+ index)) list))))
+    (let* ((value (nth (1+ (seq-position list item)) list))) (unwind-protect value (delete value list))))
 
 ;;;###autoload
 (defun meq/get-next-in-cla (item) (meq/get-next-in-list item command-line-args))
@@ -930,26 +928,58 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defmacro meq/if-item-in-list (item list &rest body)
-    (if (member item list)
-        (unwind-protect (eval `(progn ,@(pop body))) (delete item list))
-        (eval `(progn ,@body))))
+    (let* ((peabody* (pop body))
+            (peabody (if (stringp peabody*) (list peabody*) peabody*)))
+        (if (meq/item-in-list item list)
+            (eval `(progn ,@peabody))
+            (eval `(progn ,@body)))))
 
 ;;;###autoload
 (defmacro meq/if-item-in-cla (item &rest body) (eval `(meq/if-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
+(defmacro meq/if-two-items-in-list (item list &rest body)
+    (let* ((value (meq/get-next-in-list item list))
+            (peabody* (pop body))
+            (return-peabody (and (booleanp peabody*) peabody*))
+            (peabody (if (stringp peabody*) (list peabody*) peabody*)))
+        (if (meq/item-in-list item list)
+            (if return-peabody value (eval `(progn ,@peabody)))
+            (eval `(progn ,@body)))))
+
+;;;###autoload
+(defmacro meq/if-two-items-in-cla (item &rest body)
+    (eval `(meq/if-two-items-in-list ,item ,command-line-args ,@body)))
+
+;;;###autoload
 (defmacro meq/when-item-in-list (item list &rest body)
-    (when (member item list) (unwind-protect (eval `(progn ,@body)) (delete item list))))
+    (when (meq/item-in-list item list) (eval `(progn ,@body))))
 
 ;;;###autoload
 (defmacro meq/when-item-in-cla (item &rest body) (eval `(meq/when-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
+(defmacro meq/when-two-items-in-list (item list return &rest body)
+    (let* ((value (meq/get-next-in-list item list)))
+        (when (meq/item-in-list item list) (if return value (eval `(progn ,@body))))))
+
+;;;###autoload
+(defmacro meq/when-two-items-in-cla (item &rest body) (eval `(meq/when-two-items-in-list ,item ,command-line-args ,@body)))
+
+;;;###autoload
 (defmacro meq/unless-item-in-list (item list &rest body)
-    (unless (member item list) (unwind-protect (eval `(progn ,@body)) (delete item list))))
+    (unless (meq/item-in-list item list) (eval `(progn ,@body))))
 
 ;;;###autoload
 (defmacro meq/unless-item-in-cla (item &rest body) (eval `(meq/unless-item-in-list ,item ,command-line-args ,@body)))
+
+;;;###autoload
+(defmacro meq/unless-two-items-in-list (item list return &rest body)
+    (let* ((value (meq/get-next-in-list item list)))
+        (unless (meq/item-in-list item list) (if return value (eval `(progn ,@body))))))
+
+;;;###autoload
+(defmacro meq/unless-two-items-in-cla (item &rest body) (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
