@@ -915,7 +915,9 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/get-next-in-list (item list)
-    (let* ((value (nth (1+ (seq-position list item)) list))) (unwind-protect value (delete value list))))
+    (let* ((index (seq-position list item))
+            (value (when index (nth (1+ index) list))))
+        (when value (unwind-protect value (delete value list)))))
 
 ;;;###autoload
 (defun meq/get-next-in-cla (item) (meq/get-next-in-list item command-line-args))
