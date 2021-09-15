@@ -28,6 +28,9 @@
 (require 'naked)
 (require 'thingatpt)
 (require 'f)
+(require 's)
+(require 'dash)
+(require 'key-chord)
 
 (defvar meq/var/modal-modes nil)
 (defvar meq/var/ignored-modal-modes nil)
@@ -932,8 +935,8 @@ be ignored by `god-execute-with-current-bindings'."
 (defmacro meq/if-item-in-list (item list &rest body)
     (let* ((peabody* (pop body))
             (peabody (if (stringp peabody*) (list peabody*) peabody*)))
-        (if (meq/item-in-list item list)
-            (eval `(progn ,@peabody))
+        (if (member item list)
+            (unwind-protect (eval `(progn ,@peabody)) (delete item list))
             (eval `(progn ,@body)))))
 
 ;;;###autoload
@@ -945,8 +948,8 @@ be ignored by `god-execute-with-current-bindings'."
             (peabody* (pop body))
             (return-peabody (and (booleanp peabody*) peabody*))
             (peabody (if (stringp peabody*) (list peabody*) peabody*)))
-        (if (meq/item-in-list item list)
-            (if return-peabody value (eval `(progn ,@peabody)))
+        (if (member item list)
+            (unwind-protect (if return-peabody value (eval `(progn ,@peabody))) (delete item list))
             (eval `(progn ,@body)))))
 
 ;;;###autoload
@@ -955,25 +958,30 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defmacro meq/when-item-in-list (item list &rest body)
-    (when (meq/item-in-list item list) (eval `(progn ,@body))))
+    (when (member item list) (unwind-protect (eval `(progn ,@body)) (delete item list))))
 
 ;;;###autoload
-(defmacro meq/when-item-in-cla (item &rest body) (eval `(meq/when-item-in-list ,item ,command-line-args ,@body)))
+(defmacro meq/when-item-in-cla (item &rest body)
+    (eval `(meq/when-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
 (defmacro meq/when-two-items-in-list (item list return &rest body)
     (let* ((value (meq/get-next-in-list item list)))
-        (when (meq/item-in-list item list) (if return value (eval `(progn ,@body))))))
+        (when (member item list) (unwind-protect
+                                    (if return value (eval `(progn ,@body)))
+                                    (delete item list)))))
 
 ;;;###autoload
-(defmacro meq/when-two-items-in-cla (item &rest body) (eval `(meq/when-two-items-in-list ,item ,command-line-args ,@body)))
+(defmacro meq/when-two-items-in-cla (item return &rest body)
+    (eval `(meq/when-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
 (defmacro meq/unless-item-in-list (item list &rest body)
     (unless (meq/item-in-list item list) (eval `(progn ,@body))))
 
 ;;;###autoload
-(defmacro meq/unless-item-in-cla (item &rest body) (eval `(meq/unless-item-in-list ,item ,command-line-args ,@body)))
+(defmacro meq/unless-item-in-cla (item &rest body)
+    (eval `(meq/unless-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
 (defmacro meq/unless-two-items-in-list (item list return &rest body)
@@ -981,7 +989,8 @@ be ignored by `god-execute-with-current-bindings'."
         (unless (meq/item-in-list item list) (if return value (eval `(progn ,@body))))))
 
 ;;;###autoload
-(defmacro meq/unless-two-items-in-cla (item &rest body) (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,@body)))
+(defmacro meq/unless-two-items-in-cla (item return &rest body)
+    (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
