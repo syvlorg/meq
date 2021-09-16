@@ -74,6 +74,8 @@
 
 (autoload 'meq/xwinp "meq" nil t nil)
 
+(autoload 'meq/windows-p "meq" nil t nil)
+
 (autoload 'meq/org-babel-restart-session-to-point "meq" "\
 Restart session up to the src-block in the current point.
 Goes to beginning of buffer and executes each code block with
@@ -345,6 +347,16 @@ Make the current Emacs window display another buffer.
 
 \(fn ITEM &rest BODY)" nil t)
 
+(autoload 'meq/if-two-items-in-list "meq" "\
+
+
+\(fn ITEM LIST &rest BODY)" nil t)
+
+(autoload 'meq/if-two-items-in-cla "meq" "\
+
+
+\(fn ITEM &rest BODY)" nil t)
+
 (autoload 'meq/when-item-in-list "meq" "\
 
 
@@ -355,6 +367,16 @@ Make the current Emacs window display another buffer.
 
 \(fn ITEM &rest BODY)" nil t)
 
+(autoload 'meq/when-two-items-in-list "meq" "\
+
+
+\(fn ITEM LIST RETURN &rest BODY)" nil t)
+
+(autoload 'meq/when-two-items-in-cla "meq" "\
+
+
+\(fn ITEM RETURN &rest BODY)" nil t)
+
 (autoload 'meq/unless-item-in-list "meq" "\
 
 
@@ -364,6 +386,16 @@ Make the current Emacs window display another buffer.
 
 
 \(fn ITEM &rest BODY)" nil t)
+
+(autoload 'meq/unless-two-items-in-list "meq" "\
+
+
+\(fn ITEM LIST RETURN &rest BODY)" nil t)
+
+(autoload 'meq/unless-two-items-in-cla "meq" "\
+
+
+\(fn ITEM RETURN &rest BODY)" nil t)
 
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive) (evil-ex-define-cmd cmd function) (aiern-ex-define-cmd cmd function))))
 

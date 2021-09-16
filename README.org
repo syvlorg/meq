@@ -117,6 +117,9 @@
 ;;;###autoload
 (defun meq/xwinp nil (interactive) (with-eval-after-load 'exwm (derived-mode-p 'exwm-mode)))
 
+;;;###autoload
+(defun meq/windows-p nil (interactive) (member system-type '(windows-nt ms-dos)))
+
 ;; Adapted From: https://kitchingroup.cheme.cmu.edu/blog/2015/03/19/Restarting-org-babel-sessions-in-org-mode-more-effectively/
 ;;;###autoload
 (defun meq/org-babel-restart-session-to-point (&optional arg)
