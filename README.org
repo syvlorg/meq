@@ -70,7 +70,7 @@
 (defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
 ;;;###autoload
 (defun meq/cl (&rest args)
-    (let* ((path (apply #'meq/ued args))
+    (let* ((path (if (f-exists? (car args)) (car args) (apply #'meq/ued args)))
             (path-exists (f-exists? path))
             (org-file* (when path-exists (f-ext path)))
             (org-file (and org-file* (string= org-file* "org"))))

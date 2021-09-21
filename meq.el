@@ -1,3 +1,7 @@
+;; meq.el
+
+
+;; [[file:README.org::*meq.el][meq.el:1]]
 ;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Jeet Ray
@@ -64,7 +68,7 @@
 (defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
 ;;;###autoload
 (defun meq/cl (&rest args)
-    (let* ((path (apply #'meq/ued args))
+    (let* ((path (if (f-exists? (car args)) (car args) (apply #'meq/ued args)))
             (path-exists (f-exists? path))
             (org-file* (when path-exists (f-ext path)))
             (org-file (and org-file* (string= org-file* "org"))))
@@ -1040,3 +1044,4 @@ be ignored by `god-execute-with-current-bindings'."
 
 (provide 'meq)
 ;;; meq.el ends here
+;; meq.el:1 ends here
