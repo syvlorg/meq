@@ -1004,7 +1004,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/rs (item) (if (stringp item) item (symbol-name item)))
 
 ;;;###autoload
-(defun meq/rl (item) (if (listp item) item (list item))
+(defun meq/rl (item) (if (listp item) item (list item)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
