@@ -1001,6 +1001,9 @@ be ignored by `god-execute-with-current-bindings'."
     (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
+(defun meq/rs (item) (if (stringp item) cpkg (symbol-name item)))
+
+;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
     (evil-ex-define-cmd cmd function)
     (aiern-ex-define-cmd cmd function))))

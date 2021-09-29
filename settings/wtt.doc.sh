@@ -3,7 +3,7 @@
 (load (concat (getenv "HOME") "/.emacs.d/early-init.el"))
 (meq/up markdown-mode :mode ("\\.md\\'")
     :use-package-postconfig (yasnippet)
-    :upnsd-preconfig (titan :custom (meq/var/titan-snippets-dir (meq/ued-siluam "titan" "snippets"))))
+    :upnsd-preconfig (titan :custom (meq/var/titan-snippets-dir (meq/ued-lib "titan" "snippets"))))
 (meq/upnsd doc
     :custom (meq/var/doc-snippets-dir (meq/ued-siluam "doc" "snippets"))
     :mode ("\\.doc\\.md\\'" . doc-markdown-mode))
