@@ -107,7 +107,7 @@
 (defun meq/ncp nil (interactive) (and (meq/fbatp 'native-comp-available-p) (native-comp-available-p)))
 
 ;;;###autoload
-(defun meq/listtp (list*) (interactive) (and list* (listp list*)))
+(defun meq/listtp (list*) (interactive) (and list* (or (consp list*) (listp list*))))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&utm_medium=web2x&context=3
 ;;;###autoload
@@ -1006,7 +1006,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/rs (item) (if (stringp item) item (symbol-name item)))
 
 ;;;###autoload
-(defun meq/rl (item) (if (or (consp item) (listp item)) item (list item)))
+(defun meq/rl (item) (if (meq/listtp item) item (list item)))
 
 ;;;###autoload
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive)
