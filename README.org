@@ -1003,9 +1003,12 @@ be ignored by `god-execute-with-current-bindings'."
     (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
-(defun meq/rs (item &optional popstar) (cond ((stringp item) item)
-                            ((meq/listtp item) (if popstar (pop item) (car item)))
-                            (t (symbol-name item))))
+(defun meq/rs* (item) (if (stringp item) item (symbol-name item)))
+
+;;;###autoload
+(defun meq/rs (item &optional popstar)
+    (cond ((meq/listtp item) (meq/rs* (if popstar (pop item) (car item))))
+            (t (meq/rs* item))))
 
 ;;;###autoload
 (defun meq/rl (item) (if (meq/listtp item) item (list item)))
