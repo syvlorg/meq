@@ -65,6 +65,8 @@
 ;;;###autoload
 (defun meq/ued-profiles (&rest args) (f-full (apply #'meq/ued* "profiles" args)))
 ;;;###autoload
+(defun meq/ued-settings (&rest args) (f-full (apply #'meq/ued* "settings" args)))
+;;;###autoload
 (defun meq/ued-local (&rest args) (f-full (apply #'meq/ued ".local" args)))
 ;;;###autoload
 (defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
