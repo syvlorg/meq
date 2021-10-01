@@ -870,7 +870,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/test nil (interactive) (message (meq/timestamp)))
 
 ;;;###autoload
-(defun meq/which-key-change (keymap key name) (interactive)
+(defun meq/which-key-change (keymap key name &optional hook) (interactive)
     (with-eval-after-load 'which-key
         (let* ((keys (split-string key " "))
                 (keymap-name (symbol-name (meq/keymap-symbol keymap)))
@@ -886,7 +886,7 @@ be ignored by `god-execute-with-current-bindings'."
                     " "
                     (string-join (mapcar #'(lambda (key) (interactive) (concat "\"" key "\"" ")")) keys) " "))))
 
-            (add-hook 'after-init-hook #'(lambda nil (interactive)
+            (add-hook (or hook 'after-init-hook) #'(lambda nil (interactive)
                 (which-key-add-keymap-based-replacements keymap key (cons
                     name
 
@@ -896,17 +896,17 @@ be ignored by `god-execute-with-current-bindings'."
                     (eval (car (read-from-string (format "(progn %s)" super-lookup)))))))))))
 
 ;;;###autoload
-(defun meq/which-key-change-ryo (key name) (interactive)
+(defun meq/which-key-change-ryo (key name &optional hook) (interactive)
     (with-eval-after-load 'ryo-modal
-        (meq/which-key-change ryo-modal-mode-map key name)))
+        (meq/which-key-change ryo-modal-mode-map key name hook)))
 
 ;;;###autoload
 (meq/which-key-change-ryo ";" "meq")
 
 ;;;###autoload
-(defun meq/which-key-change-sorrow (key name) (interactive)
+(defun meq/which-key-change-sorrow (key name &optional hook) (interactive)
     (with-eval-after-load 'sorrow
-        (meq/which-key-change sorrow-mode-map key name)))
+        (meq/which-key-change sorrow-mode-map key name hook)))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&utm_medium=web2x&context=3
 ;; And: https://github.com/raxod502/straight.el#updating-recipe-repositories
