@@ -940,6 +940,12 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/item-in-cla (item) (meq/item-in-list item command-line-args))
 
 ;;;###autoload
+(defun meq/two-items-in-list (item list) (unwind-protect (when (member item list) (meq/get-next-in-list item list)) (delete item list)))
+
+;;;###autoload
+(defun meq/two-items-in-cla (item) (meq/two-items-in-list item command-line-args))
+
+;;;###autoload
 (defmacro meq/if-item-in-list (item list &rest body)
     (let* ((peabody* (pop body))
             (peabody (if (stringp peabody*) (list peabody*) peabody*)))
