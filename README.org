@@ -79,6 +79,9 @@
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
 
 ;;;###autoload
+(defun meq/pget (item plist) (or (ignore-error (plist-get plist item)) (cl-getf plist item)))
+
+;;;###autoload
 (defun meq/basename (&optional file) (interactive) (car (split-string (file-name-base (or file buffer-file-name)) "\\.")))
 
 ;; Adapted From: https://emacsredux.com/blog/2019/01/10/convert-a-keyword-to-a-symbol/
