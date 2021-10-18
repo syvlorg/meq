@@ -76,6 +76,12 @@
             (if org-file (org-babel-load-file path t) (load path)))))
 
 ;;;###autoload
+(defun meq/load-emacs-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-lib file))) files))
+
+;;;###autoload
+(defun meq/load-siluam-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-siluam file))) files))
+
+;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
 
 ;;;###autoload

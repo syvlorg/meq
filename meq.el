@@ -51,23 +51,19 @@
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
 (defvar meq/var/which-key-first-show t)
-(defvar pre-user-emacs-directory (concat (getenv "HOME") "/.emacs.d"))
-(defvar user-emacs-directory pre-user-emacs-directory)
 
 ;;;###autoload
-(defun meq/ued* (&rest args) (f-full (apply #'f-join pre-user-emacs-directory args)))
+(defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
 ;;;###autoload
-(defun meq/ued-lib (&rest args) (f-full (apply #'meq/ued* "lib" args)))
+(defun meq/ued-lib (&rest args) (f-full (apply #'meq/ued "lib" args)))
 ;;;###autoload
-(defun meq/ued-siluam (&rest args) (f-full (apply #'meq/ued* "siluam" args)))
+(defun meq/ued-siluam (&rest args) (f-full (apply #'meq/ued "siluam" args)))
 ;;;###autoload
-(defun meq/ued-profiles (&rest args) (f-full (apply #'meq/ued* "profiles" args)))
+(defun meq/ued-profiles (&rest args) (f-full (apply #'meq/ued "profiles" args)))
 ;;;###autoload
-(defun meq/ued-settings (&rest args) (f-full (apply #'meq/ued* "settings" args)))
+(defun meq/ued-settings (&rest args) (f-full (apply #'meq/ued "settings" args)))
 ;;;###autoload
 (defun meq/ued-local (&rest args) (f-full (apply #'meq/ued ".local" args)))
-;;;###autoload
-(defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
 ;;;###autoload
 (defun meq/cl (&rest args)
     (let* ((path (if (f-exists? (car args)) (car args) (apply #'meq/ued args)))
@@ -78,7 +74,16 @@
             (if org-file (org-babel-load-file path t) (load path)))))
 
 ;;;###autoload
+(defun meq/load-emacs-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-lib file))) files))
+
+;;;###autoload
+(defun meq/load-siluam-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-siluam file))) files))
+
+;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
+
+;;;###autoload
+(defun meq/pget (item plist) (or (ignore-error (plist-get plist item)) (cl-getf plist item)))
 
 ;;;###autoload
 (defun meq/basename (&optional file) (interactive) (car (split-string (file-name-base (or file buffer-file-name)) "\\.")))
@@ -940,6 +945,12 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/item-in-cla (item) (meq/item-in-list item command-line-args))
+
+;;;###autoload
+(defun meq/two-items-in-list (item list) (unwind-protect (when (member item list) (meq/get-next-in-list item list)) (delete item list)))
+
+;;;###autoload
+(defun meq/two-items-in-cla (item) (meq/two-items-in-list item command-line-args))
 
 ;;;###autoload
 (defmacro meq/if-item-in-list (item list &rest body)

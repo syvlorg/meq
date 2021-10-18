@@ -26,6 +26,11 @@
 
 \(fn &rest ARGS)" nil nil)
 
+(autoload 'meq/ued-settings "meq" "\
+
+
+\(fn &rest ARGS)" nil nil)
+
 (autoload 'meq/ued-local "meq" "\
 
 
@@ -291,19 +296,19 @@ Make the current Emacs window display another buffer.
 (autoload 'meq/which-key-change "meq" "\
 
 
-\(fn KEYMAP KEY NAME)" t nil)
+\(fn KEYMAP KEY NAME &optional HOOK)" t nil)
 
 (autoload 'meq/which-key-change-ryo "meq" "\
 
 
-\(fn KEY NAME)" t nil)
+\(fn KEY NAME &optional HOOK)" t nil)
 
 (meq/which-key-change-ryo ";" "meq")
 
 (autoload 'meq/which-key-change-sorrow "meq" "\
 
 
-\(fn KEY NAME)" t nil)
+\(fn KEY NAME &optional HOOK)" t nil)
 
 (autoload 'meq/straight-upgrade "meq" nil t nil)
 
@@ -396,6 +401,21 @@ Make the current Emacs window display another buffer.
 
 
 \(fn ITEM RETURN &rest BODY)" nil t)
+
+(autoload 'meq/rs* "meq" "\
+
+
+\(fn ITEM)" nil nil)
+
+(autoload 'meq/rs "meq" "\
+
+
+\(fn ITEM &optional POPSTAR)" nil nil)
+
+(autoload 'meq/rl "meq" "\
+
+
+\(fn ITEM)" nil nil)
 
 (with-eval-after-load 'aiern (with-eval-after-load 'evil (defun meq/both-ex-define-cmd (cmd function) (interactive) (evil-ex-define-cmd cmd function) (aiern-ex-define-cmd cmd function))))
 
