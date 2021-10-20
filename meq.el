@@ -71,7 +71,7 @@
             (org-file* (when path-exists (f-ext path)))
             (org-file (and org-file* (string= org-file* "org"))))
         (when path-exists
-            (if org-file (org-babel-load-file path) (load path)))))
+            (if org-file (org-babel-load-file path t) (load path)))))
 
 ;;;###autoload
 (defun meq/load-emacs-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-lib file))) files))
