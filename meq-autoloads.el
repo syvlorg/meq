@@ -6,7 +6,7 @@
 ;;;### (autoloads nil "meq" "meq.el" (0 0 0 0))
 ;;; Generated autoloads from meq.el
 
-(autoload 'meq/ued* "meq" "\
+(autoload 'meq/ued "meq" "\
 
 
 \(fn &rest ARGS)" nil nil)
@@ -36,17 +36,27 @@
 
 \(fn &rest ARGS)" nil nil)
 
-(autoload 'meq/ued "meq" "\
-
-
-\(fn &rest ARGS)" nil nil)
-
 (autoload 'meq/cl "meq" "\
 
 
 \(fn &rest ARGS)" nil nil)
 
+(autoload 'meq/load-emacs-file "meq" "\
+
+
+\(fn &rest FILES)" nil nil)
+
+(autoload 'meq/load-siluam-file "meq" "\
+
+
+\(fn &rest FILES)" nil nil)
+
 (autoload 'meq/timestamp "meq" nil t nil)
+
+(autoload 'meq/pget "meq" "\
+
+
+\(fn ITEM PLIST)" nil nil)
 
 (autoload 'meq/basename "meq" "\
 
@@ -153,10 +163,6 @@ Can be used as :around advice for `org-babel-tangle-single-block'.
 (autoload 'meq/src-mode-settings "meq" nil t nil)
 
 (autoload 'meq/src-mode-exit "meq" nil t nil)
-
-(advice-add #'org-edit-src-exit :after #'meq/src-mode-exit)
-
-(advice-add #'org-edit-src-abort :after #'meq/src-mode-exit)
 
 (advice-add #'org-edit-special :after #'meq/src-mode-settings)
 
@@ -342,6 +348,16 @@ Make the current Emacs window display another buffer.
 
 \(fn ITEM)" nil nil)
 
+(autoload 'meq/two-items-in-list "meq" "\
+
+
+\(fn ITEM LIST)" nil nil)
+
+(autoload 'meq/two-items-in-cla "meq" "\
+
+
+\(fn ITEM)" nil nil)
+
 (autoload 'meq/if-item-in-list "meq" "\
 
 
@@ -438,7 +454,7 @@ Make the current Emacs window display another buffer.
 
 \(fn &optional UA)" t nil)
 
-(register-definition-prefixes "meq" '("meq/" "pre-user-emacs-directory" "user-emacs-directory" "which-key--get-keymap-bindings-advice"))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "meq" '("meq/" "which-key--get-keymap-bindings-advice")))
 
 ;;;***
 

@@ -1,7 +1,7 @@
 ;; meq.el
 
 
-;; [[file:README.org::*meq.el][meq.el:1]]
+;; [[file:~/.emacs.d/lib/meq/README.org::*meq.el][meq.el:1]]
 ;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Jeet Ray
@@ -357,10 +357,10 @@ session as the current block. ARG has same meaning as in
 (defun meq/src-mode-exit nil (interactive) (with-eval-after-load 'org (meq/disable-all-modal-modes)))
 
 ;; Adapted From: https://github.com/syl20bnr/spacemacs/issues/13058#issuecomment-565741009
-;;;###autoload
-(advice-add #'org-edit-src-exit :after #'meq/src-mode-exit)
-;;;###autoload
-(advice-add #'org-edit-src-abort :after #'meq/src-mode-exit)
+;; ;;;###autoload
+;; (advice-add #'org-edit-src-exit :after #'meq/src-mode-exit)
+;; ;;;###autoload
+;; (advice-add #'org-edit-src-abort :after #'meq/src-mode-exit)
 ;;;###autoload
 (advice-add #'org-edit-special :after #'meq/src-mode-settings)
 ;;;###autoload
@@ -418,8 +418,9 @@ session as the current block. ARG has same meaning as in
             ;; some symbols are functions which aren't normal mode functions
             (when (meq/fbatp mode-symbol)
                 (if include-ignored
-                    (progn (message (format "Disabling %s" (symbol-name mode-symbol)))
-                    (ignore-errors (funcall mode-symbol -1)))
+                    (progn
+                        (message (format "Disabling %s" (symbol-name mode-symbol)))
+                        (ignore-errors (funcall mode-symbol -1)))
                     (message (format "Enabling %s" (symbol-name mode-symbol)))
                     (ignore-errors (funcall mode-symbol 1)))))
             meq/var/ignored-modal-modes)
