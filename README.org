@@ -53,6 +53,7 @@
 (defvar meq/var/all-modal-modes-off nil)
 (defvar meq/var/last-buffer nil)
 (defvar meq/var/which-key-first-show t)
+(defvar meq/var/tab-size-in-spaces 4)
 
 ;;;###autoload
 (defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
@@ -213,8 +214,7 @@ session as the current block. ARG has same meaning as in
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/6klewl/org_cyclingto_go_from_folded_to_children_skipping/djniygy?utm_source=share&utm_medium=web2x&context=3
 ;;;###autoload
-(defun meq/org-cycle nil (interactive)
-    (with-eval-after-load 'org (if (meq/outline-folded-p) (org-cycle) (evil-close-fold))))
+(defun meq/org-cycle nil (interactive) (with-eval-after-load 'org (if (meq/outline-folded-p) (org-cycle) (evil-close-fold))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
