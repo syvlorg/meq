@@ -186,15 +186,30 @@ session as the current block. ARG has same meaning as in
 ;; Adapted From: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
 ;;;###autoload
 (defun meq/outline-folded-p nil
+    "Returns non-nil if point is on a folded headline or plain list
+    item."
+    (interactive)
     (with-eval-after-load 'org
-        "Returns non-nil if point is on a folded headline or plain list
-        item."
-        (interactive)
-        (and (if (eq major-mode 'org-mode)
+        (and (if (derived-mode-p 'org-mode)
                 (or (org-at-heading-p)
                     (org-at-item-p))
                 outline-on-heading-p)
             (invisible-p (point-at-eol)))))
+
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/26840/31428
+;; User: https://emacs.stackexchange.com/users/253/dan
+;; Adapted From: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
+;;;###autoload
+(defun meq/outline-on-heading-or-item-p nil
+    "Returns non-nil if point is on a folded headline or plain list
+    item."
+    (interactive)
+    (with-eval-after-load 'org
+        (if (derived-mode-p 'org-mode)
+                (or (org-at-heading-p)
+                    (org-at-item-p))
+                outline-on-heading-p)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/37791/31428
@@ -205,14 +220,86 @@ session as the current block. ARG has same meaning as in
         (outline-up-heading (if (and (or (org-at-heading-p) (invisible-p (point))) (invisible-p (point-at-eol))
                 (>= (org-current-level) 2))
             1 0))))
-;;;###autoload
-(with-eval-after-load 'evil (advice-add #'evil-close-fold :before #'meq/go-to-parent))
-;;;###autoload
-(with-eval-after-load 'aiern (advice-add #'aiern-close-fold :before #'meq/go-to-parent))
 
-;; Adapted From: https://www.reddit.com/r/emacs/comments/6klewl/org_cyclingto_go_from_folded_to_children_skipping/djniygy?utm_source=share&utm_medium=web2x&context=3
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/54550
+;; User: https://emacs.stackexchange.com/users/21533/jagrg
 ;;;###autoload
-(defun meq/org-cycle nil (interactive) (with-eval-after-load 'org (if (meq/outline-folded-p) (org-cycle) (evil-close-fold))))
+(defun meq/tab (&optional tab-size-in-spaces) (insert (make-string (or tab-size-in-spaces meq/var/tab-size-in-spaces) ?\s)))
+
+;; Adapted From:
+;; Answer: https://stackoverflow.com/a/27799515
+;; User: https://stackoverflow.com/users/850781/sds
+;;;###autoload
+(defun meq/prior-char (&optional *point) (interactive) (char-syntax (if *point (char-before *point) (preceding-char))))
+
+;;;###autoload
+(defun meq/whitespace-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char " ") ,(string-to-char "\t"))))
+
+;;;###autoload
+(defun meq/newline-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
+
+;;;###autoload
+(defun meq/untab (&optional tab-size-in-spaces) (interactive) (mapc
+    #'(lambda (i) (interactive) (when (meq/whitespace-p) (delete-backward-char 1)))
+    (number-sequence 1 (or tab-size-in-spaces meq/var/tab-size-in-spaces))))
+
+;;;###autoload
+(defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-p)) (meq/whitespace-p)) (delete-backward-char 1)))
+
+;;;###autoload
+(defun meq/delete-white-or-word nil (interactive) (cond
+    ((bolp) (delete-backward-char 1))
+    ((meq/whitespace-p) (if (meq/whitespace-p (1- (point)))
+                        (meq/delete-while-white)
+                        (delete-backward-char 1)
+                        (meq/delete-while-white t)))
+    (t (meq/delete-while-white t))))
+
+;;;###autoload
+(defun meq/org-close-fold nil
+    "Hide the entire subtree from root headline at point."
+    (interactive)
+    (with-eval-after-load 'org (cond
+        ((meq/fbatp aiern-mode) (aiern-close-fold))
+        ((meq/fbatp evil-mode) (evil-close-fold))
+        (t (outline-hide-subtree)))
+    (message "FOLDED")))
+
+;;;###autoload
+(defun meq/org-cycle (func &rest args) (interactive) (with-eval-after-load 'org (if (meq/outline-folded-p) (apply func args) (meq/org-close-fold))))
+
+;;;###autoload
+(defun meq/no-mode-org-cycle (&optional untab)
+    (if (meq/outline-on-heading-or-item-p) (apply #'meq/org-cycle func args) (if untab (meq/untab) (meq/tab))))
+
+;;;###autoload
+(defun meq/*org-cycle-indent (untab func &rest args)
+    (with-eval-after-load 'org
+        (let* ((no-mode-cycle-indent (lambda nil (interactive) )))
+            (cond ((meq/fbatp aiern-mode) (cond
+                    ((member aiern-state '(normal visual)) (apply #'meq/org-cycle func args))
+                    ((member aiern-state '(insert)) (meq/tab))
+                    ((member aiern-state '(emacs)) (meq/no-mode-org-cycle untab))
+                    (t (apply #'meq/org-cycle func args))))
+                ((meq/fbatp evil-mode) (cond
+                    ((member evil-state '(normal visual)) (apply #'meq/org-cycle func args))
+                    ((member evil-state '(insert)) (meq/tab))
+                    ((member evil-state '(emacs)) (meq/no-mode-org-cycle untab))
+                    (t (apply #'meq/org-cycle func args))))
+                (t (meq/no-mode-org-cycle untab))))))
+
+;;;###autoload
+(defun meq/org-cycle-indent (func &rest args) (apply #'meq/*org-cycle-indent nil func args))
+
+;;;###autoload
+(advice-add #'org-cycle :around #'meq/org-cycle-indent)
+
+;;;###autoload
+(defun meq/org-shifttab (func &rest args) (interactive) (apply #'meq/*org-cycle-indent t func args))
+
+;;;###autoload
+(advice-add #'org-shifttab :around #'meq/org-shifttab)
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898

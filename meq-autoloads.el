@@ -106,15 +106,79 @@ Kill session for current code block." t nil)
 (autoload 'meq/org-babel-remove-result-buffer "meq" "\
 Remove results from every code block in buffer." t nil)
 
-(autoload 'meq/outline-folded-p "meq" nil nil nil)
+(autoload 'meq/outline-folded-p "meq" "\
+Returns non-nil if point is on a folded headline or plain list
+    item." t nil)
+
+(autoload 'meq/outline-on-heading-or-item-p "meq" "\
+Returns non-nil if point is on a folded headline or plain list
+    item." t nil)
 
 (autoload 'meq/go-to-parent "meq" nil t nil)
 
-(with-eval-after-load 'evil (advice-add #'evil-close-fold :before #'meq/go-to-parent))
+(autoload 'meq/tab "meq" "\
 
-(with-eval-after-load 'aiern (advice-add #'aiern-close-fold :before #'meq/go-to-parent))
 
-(autoload 'meq/org-cycle "meq" nil t nil)
+\(fn &optional TAB-SIZE-IN-SPACES)" nil nil)
+
+(autoload 'meq/prior-char "meq" "\
+
+
+\(fn &optional *POINT)" t nil)
+
+(autoload 'meq/whitespace-p "meq" "\
+
+
+\(fn &optional *POINT)" t nil)
+
+(autoload 'meq/newline-p "meq" "\
+
+
+\(fn &optional *POINT)" t nil)
+
+(autoload 'meq/untab "meq" "\
+
+
+\(fn &optional TAB-SIZE-IN-SPACES)" t nil)
+
+(autoload 'meq/delete-while-white "meq" "\
+
+
+\(fn &optional *NOT)" t nil)
+
+(autoload 'meq/delete-white-or-word "meq" nil t nil)
+
+(autoload 'meq/org-close-fold "meq" "\
+Hide the entire subtree from root headline at point." t nil)
+
+(autoload 'meq/org-cycle "meq" "\
+
+
+\(fn FUNC &rest ARGS)" t nil)
+
+(autoload 'meq/no-mode-org-cycle "meq" "\
+
+
+\(fn &optional UNTAB)" nil nil)
+
+(autoload 'meq/*org-cycle-indent "meq" "\
+
+
+\(fn UNTAB FUNC &rest ARGS)" nil nil)
+
+(autoload 'meq/org-cycle-indent "meq" "\
+
+
+\(fn FUNC &rest ARGS)" nil nil)
+
+(advice-add #'org-cycle :around #'meq/org-cycle-indent)
+
+(autoload 'meq/org-shifttab "meq" "\
+
+
+\(fn FUNC &rest ARGS)" t nil)
+
+(advice-add #'org-shifttab :around #'meq/org-shifttab)
 
 (autoload 'meq/org-babel-tangle-append "meq" "\
 Append source code block at point to its tangle file.
