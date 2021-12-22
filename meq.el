@@ -275,7 +275,11 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
-    (progn (while (invisible-p (point)) (backward-char)) (apply func args))
+    (progn
+        (when (invisible-p (point))
+            (beginning-of-line)
+            (when (invisible-p (point)) (while (invisible-p (point)) (backward-char))))
+        (apply func args))
     (if (meq/outline-on-heading-p)
         (cond
             ((meq/fbatp aiern-mode) (aiern-close-fold))
