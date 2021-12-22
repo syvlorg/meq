@@ -107,18 +107,13 @@ Kill session for current code block." t nil)
 Remove results from every code block in buffer." t nil)
 
 (autoload 'meq/outline-on-heading-p "meq" "\
-Returns non-nil if point is on a headline or plain list
-    item." t nil)
-
-(autoload 'meq/outline-on-heading-or-item-p "meq" "\
-Returns non-nil if point is on a headline or plain list
-    item." t nil)
-
-(autoload 'meq/folded-p "meq" "\
-Returns non-nil if point is on a folded org object." t nil)
+Returns non-nil if point is on a headline." t nil)
 
 (autoload 'meq/foldable-p "meq" "\
 Returns non-nil if point can fold." t nil)
+
+(autoload 'meq/folded-p "meq" "\
+Returns non-nil if point is on a folded org object." t nil)
 
 (autoload 'meq/unfolded-p "meq" "\
 Returns non-nil if point is on an unfolded org object." t nil)

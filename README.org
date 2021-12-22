@@ -188,40 +188,15 @@ session as the current block. ARG has same meaning as in
 ;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
 ;;;###autoload
 (defun meq/outline-on-heading-p nil
-    "Returns non-nil if point is on a headline or plain list
-    item."
+    "Returns non-nil if point is on a headline."
     (interactive)
     (if (derived-mode-p 'org-mode)
-        (or (org-at-heading-p)
-            (outline-on-heading-p))
+        (or (outline-on-heading-p)
+
+            ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L20744
+            (org-at-heading-p))
+
         (outline-on-heading-p)))
-
-;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/a/26840/31428
-;; User: https://emacs.stackexchange.com/users/253/dan
-;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
-;;;###autoload
-(defun meq/outline-on-heading-or-item-p nil
-    "Returns non-nil if point is on a headline or plain list
-    item."
-    (interactive)
-    (if (derived-mode-p 'org-mode)
-        (or (org-at-item-p)
-            (org-element-at-point)
-            (org-element-context)
-            (meq/outline-on-heading-p))
-        (or (meq/outline-on-heading-p))))
-
-;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/a/26840/31428
-;; User: https://emacs.stackexchange.com/users/253/dan
-;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
-;;;###autoload
-(defun meq/folded-p nil
-    "Returns non-nil if point is on a folded org object."
-    (interactive)
-    (and (meq/outline-on-heading-or-item-p)
-         (invisible-p (point-at-eol))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
@@ -231,19 +206,24 @@ session as the current block. ARG has same meaning as in
 (defun meq/foldable-p nil
     "Returns non-nil if point can fold."
     (interactive)
-    (or (meq/outline-on-heading-or-item-p)
+    (or (meq/outline-on-heading-p)
+
+                                         ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L12889
+        (when (derived-mode-p 'org-mode) (or (org-at-property-drawer-p)
+
+            ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L20809
+            (org-at-drawer-p)
+
+            ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L20815
+            (org-at-block-p)))
+
         (invisible-p (point-at-eol))))
 
-;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/a/26840/31428
-;; User: https://emacs.stackexchange.com/users/253/dan
-;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
 ;;;###autoload
-(defun meq/unfolded-p nil
-    "Returns non-nil if point is on an unfolded org object."
-    (interactive)
-    (and (meq/outline-on-heading-or-item-p)
-         (not (invisible-p (point-at-eol)))))
+(defun meq/folded-p nil "Returns non-nil if point is on a folded org object." (interactive) (and (meq/foldable-p) (invisible-p (point-at-eol))))
+
+;;;###autoload
+(defun meq/unfolded-p nil "Returns non-nil if point is on an unfolded org object." (interactive) (and (meq/foldable-p) (not (invisible-p (point-at-eol)))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/37791/31428
@@ -316,7 +296,7 @@ session as the current block. ARG has same meaning as in
                 ((member evil-state '(normal visual)) (apply #'meq/outline-cycle func args))
                 ((member evil-state '(insert)) (meq/outline-indent untab))
                 (t (apply oci untab func args))))
-            (t (apply #'meq/outline-cycle func args)))))
+            (t (apply oci untab func args)))))
 
 ;;;###autoload
 (advice-add #'org-cycle :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))
