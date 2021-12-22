@@ -187,17 +187,30 @@ session as the current block. ARG has same meaning as in
 ;; User: https://emacs.stackexchange.com/users/253/dan
 ;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
 ;;;###autoload
-(defun meq/outline-on-heading-or-item-p nil
+(defun meq/outline-on-heading-p nil
     "Returns non-nil if point is on a headline or plain list
     item."
     (interactive)
     (if (derived-mode-p 'org-mode)
         (or (org-at-heading-p)
-            (org-at-item-p)
-            (org-element-at-point)
-            (org-element-context)
             (outline-on-heading-p))
         (outline-on-heading-p)))
+
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/26840/31428
+;; User: https://emacs.stackexchange.com/users/253/dan
+;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
+;;;###autoload
+(defun meq/outline-on-heading-or-item-p nil
+    "Returns non-nil if point is on a headline or plain list
+    item."
+    (interactive)
+    (if (derived-mode-p 'org-mode)
+        (or (org-at-item-p)
+            (org-element-at-point)
+            (org-element-context)
+            (meq/outline-on-heading-p))
+        (or (meq/outline-on-heading-p))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
@@ -267,17 +280,15 @@ session as the current block. ARG has same meaning as in
     (t (meq/delete-while-white t))))
 
 ;;;###autoload
-(defun meq/outline-close-fold (func &rest args)
-    "Hide the entire subtree from root headline at point."
-    (interactive)
-    (cond
-        ((meq/fbatp aiern-mode) (aiern-close-fold))
-        ((meq/fbatp evil-mode) (evil-close-fold))
-        (t (apply func args)))
-    (message "FOLDED"))
-
-;;;###autoload
-(defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p) (apply func args) ))
+(defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
+    (apply func args)
+    (if (meq/outline-on-heading-p)
+        (cond
+            ((meq/fbatp aiern-mode) (aiern-close-fold))
+            ((meq/fbatp evil-mode) (evil-close-fold))
+            (t (outline-hide-subtree)))
+        (apply func args))
+    (message "FOLDED")))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/54550
@@ -294,7 +305,7 @@ session as the current block. ARG has same meaning as in
 (defun meq/outline-indent (untab) (interactive) (if untab (meq/untab) (meq/tab)))
 
 ;;;###autoload
-(defun meq/outline-cycle-indent (untab func &rest args)
+(defun meq/outline-cycle-indent (untab func &rest args) (interactive)
     (let* ((oci (lambda (untab func &rest args) (interactive) (if (meq/foldable-p) (apply #'meq/outline-cycle func args) (meq/outline-indent untab)))))
         (cond
             ((meq/fbatp aiern-mode) (cond
@@ -305,7 +316,7 @@ session as the current block. ARG has same meaning as in
                 ((member evil-state '(normal visual)) (apply #'meq/outline-cycle func args))
                 ((member evil-state '(insert)) (meq/outline-indent untab))
                 (t (apply oci untab func args))))
-            (t (apply #'meq/outline-cycle untab func args)))))
+            (t (apply #'meq/outline-cycle func args)))))
 
 ;;;###autoload
 (advice-add #'org-cycle :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))

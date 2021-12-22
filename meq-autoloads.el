@@ -106,6 +106,10 @@ Kill session for current code block." t nil)
 (autoload 'meq/org-babel-remove-result-buffer "meq" "\
 Remove results from every code block in buffer." t nil)
 
+(autoload 'meq/outline-on-heading-p "meq" "\
+Returns non-nil if point is on a headline or plain list
+    item." t nil)
+
 (autoload 'meq/outline-on-heading-or-item-p "meq" "\
 Returns non-nil if point is on a headline or plain list
     item." t nil)
@@ -120,11 +124,6 @@ Returns non-nil if point can fold." t nil)
 Returns non-nil if point is on an unfolded org object." t nil)
 
 (autoload 'meq/go-to-parent "meq" nil t nil)
-
-(autoload 'meq/tab "meq" "\
-
-
-\(fn &optional TAB-SIZE-IN-SPACES)" nil nil)
 
 (autoload 'meq/prior-char "meq" "\
 
@@ -141,11 +140,6 @@ Returns non-nil if point is on an unfolded org object." t nil)
 
 \(fn &optional *POINT)" t nil)
 
-(autoload 'meq/untab "meq" "\
-
-
-\(fn &optional TAB-SIZE-IN-SPACES)" t nil)
-
 (autoload 'meq/delete-while-white "meq" "\
 
 
@@ -153,39 +147,34 @@ Returns non-nil if point is on an unfolded org object." t nil)
 
 (autoload 'meq/delete-white-or-word "meq" nil t nil)
 
-(autoload 'meq/outline-close-fold "meq" "\
-Hide the entire subtree from root headline at point.
-
-\(fn FUNC &rest ARGS)" t nil)
-
 (autoload 'meq/outline-cycle "meq" "\
 
 
 \(fn FUNC &rest ARGS)" t nil)
 
-(autoload 'meq/no-mode-outline-cycle "meq" "\
+(autoload 'meq/tab "meq" "\
 
 
-\(fn &optional UNTAB)" nil nil)
+\(fn &optional TAB-SIZE-IN-SPACES)" nil nil)
 
-(autoload 'meq/*outline-cycle-indent "meq" "\
+(autoload 'meq/untab "meq" "\
 
 
-\(fn UNTAB FUNC &rest ARGS)" nil nil)
+\(fn &optional TAB-SIZE-IN-SPACES)" t nil)
+
+(autoload 'meq/outline-indent "meq" "\
+
+
+\(fn UNTAB)" t nil)
 
 (autoload 'meq/outline-cycle-indent "meq" "\
 
 
-\(fn FUNC &rest ARGS)" nil nil)
+\(fn UNTAB FUNC &rest ARGS)" t nil)
 
-(advice-add #'org-cycle :around #'meq/outline-cycle-indent)
+(advice-add #'org-cycle :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))
 
-(autoload 'meq/outline-shifttab "meq" "\
-
-
-\(fn FUNC &rest ARGS)" t nil)
-
-(advice-add #'org-shifttab :around #'meq/outline-shifttab)
+(advice-add #'org-shifttab :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent t func args)))
 
 (autoload 'meq/org-babel-tangle-append "meq" "\
 Append source code block at point to its tangle file.

@@ -185,17 +185,30 @@ session as the current block. ARG has same meaning as in
 ;; User: https://emacs.stackexchange.com/users/253/dan
 ;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
 ;;;###autoload
-(defun meq/outline-on-heading-or-item-p nil
+(defun meq/outline-on-heading-p nil
     "Returns non-nil if point is on a headline or plain list
     item."
     (interactive)
     (if (derived-mode-p 'org-mode)
         (or (org-at-heading-p)
-            (org-at-item-p)
-            (org-element-at-point)
-            (org-element-context)
             (outline-on-heading-p))
         (outline-on-heading-p)))
+
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/26840/31428
+;; User: https://emacs.stackexchange.com/users/253/dan
+;; And: https://emacsredux.com/blog/2020/06/14/checking-the-major-mode-in-emacs-lisp/
+;;;###autoload
+(defun meq/outline-on-heading-or-item-p nil
+    "Returns non-nil if point is on a headline or plain list
+    item."
+    (interactive)
+    (if (derived-mode-p 'org-mode)
+        (or (org-at-item-p)
+            (org-element-at-point)
+            (org-element-context)
+            (meq/outline-on-heading-p))
+        (or (meq/outline-on-heading-p))))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
@@ -241,12 +254,6 @@ session as the current block. ARG has same meaning as in
             1 0))))
 
 ;; Adapted From:
-;; Answer: https://emacs.stackexchange.com/a/54550
-;; User: https://emacs.stackexchange.com/users/21533/jagrg
-;;;###autoload
-(defun meq/tab (&optional tab-size-in-spaces) (insert (make-string (or tab-size-in-spaces meq/var/tab-size-in-spaces) ?\s)))
-
-;; Adapted From:
 ;; Answer: https://stackoverflow.com/a/27799515
 ;; User: https://stackoverflow.com/users/850781/sds
 ;;;###autoload
@@ -257,11 +264,6 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/newline-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
-
-;;;###autoload
-(defun meq/untab (&optional tab-size-in-spaces) (interactive) (mapc
-    #'(lambda (i) (interactive) (when (meq/whitespace-p) (delete-backward-char 1)))
-    (number-sequence 1 (or tab-size-in-spaces meq/var/tab-size-in-spaces))))
 
 ;;;###autoload
 (defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-p)) (meq/whitespace-p)) (delete-backward-char 1)))
@@ -276,48 +278,49 @@ session as the current block. ARG has same meaning as in
     (t (meq/delete-while-white t))))
 
 ;;;###autoload
-(defun meq/outline-close-fold (func &rest args)
-    "Hide the entire subtree from root headline at point."
-    (interactive)
-    (cond
-        ((meq/fbatp aiern-mode) (aiern-close-fold))
-        ((meq/fbatp evil-mode) (evil-close-fold))
-        (t (apply func args)))
-    (message "FOLDED"))
+(defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
+    (apply func args)
+    (if (meq/outline-on-heading-p)
+        (cond
+            ((meq/fbatp aiern-mode) (aiern-close-fold))
+            ((meq/fbatp evil-mode) (evil-close-fold))
+            (t (outline-hide-subtree)))
+        (apply func args))
+    (message "FOLDED")))
+
+;; Adapted From:
+;; Answer: https://emacs.stackexchange.com/a/54550
+;; User: https://emacs.stackexchange.com/users/21533/jagrg
+;;;###autoload
+(defun meq/tab (&optional tab-size-in-spaces) (insert (make-string (or tab-size-in-spaces meq/var/tab-size-in-spaces) ?\s)))
 
 ;;;###autoload
-(defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p) (apply func args) (apply #'meq/outline-close-fold func args)))
+(defun meq/untab (&optional tab-size-in-spaces) (interactive) (mapc
+    #'(lambda (i) (interactive) (when (meq/whitespace-p) (delete-backward-char 1)))
+    (number-sequence 1 (or tab-size-in-spaces meq/var/tab-size-in-spaces))))
 
 ;;;###autoload
-(defun meq/no-mode-outline-cycle (&optional untab) (if (meq/foldable-p) (apply #'meq/outline-cycle func args) (if untab (meq/untab) (meq/tab))))
+(defun meq/outline-indent (untab) (interactive) (if untab (meq/untab) (meq/tab)))
 
 ;;;###autoload
-(defun meq/*outline-cycle-indent (untab func &rest args)
-    (with-eval-after-load 'org
-        (let* ((no-mode-cycle-indent (lambda nil (interactive) )))
-            (cond ((meq/fbatp aiern-mode) (cond
-                    ((member aiern-state '(normal visual)) (apply #'meq/outline-cycle func args))
-                    ((member aiern-state '(insert)) (meq/tab))
-                    ((member aiern-state '(emacs)) (meq/no-mode-outline-cycle untab))
-                    (t (apply #'meq/outline-cycle func args))))
-                ((meq/fbatp evil-mode) (cond
-                    ((member evil-state '(normal visual)) (apply #'meq/outline-cycle func args))
-                    ((member evil-state '(insert)) (meq/tab))
-                    ((member evil-state '(emacs)) (meq/no-mode-outline-cycle untab))
-                    (t (apply #'meq/outline-cycle func args))))
-                (t (meq/no-mode-outline-cycle untab))))))
+(defun meq/outline-cycle-indent (untab func &rest args) (interactive)
+    (let* ((oci (lambda (untab func &rest args) (interactive) (if (meq/foldable-p) (apply #'meq/outline-cycle func args) (meq/outline-indent untab)))))
+        (cond
+            ((meq/fbatp aiern-mode) (cond
+                ((member aiern-state '(normal visual)) (apply #'meq/outline-cycle func args))
+                ((member aiern-state '(insert)) (meq/outline-indent untab))
+                (t (apply oci untab func args))))
+            ((meq/fbatp evil-mode) (cond
+                ((member evil-state '(normal visual)) (apply #'meq/outline-cycle func args))
+                ((member evil-state '(insert)) (meq/outline-indent untab))
+                (t (apply oci untab func args))))
+            (t (apply #'meq/outline-cycle func args)))))
 
 ;;;###autoload
-(defun meq/outline-cycle-indent (func &rest args) (apply #'meq/*outline-cycle-indent nil func args))
+(advice-add #'org-cycle :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))
 
 ;;;###autoload
-(advice-add #'org-cycle :around #'meq/outline-cycle-indent)
-
-;;;###autoload
-(defun meq/outline-shifttab (func &rest args) (interactive) (apply #'meq/*outline-cycle-indent t func args))
-
-;;;###autoload
-(advice-add #'org-shifttab :around #'meq/outline-shifttab)
+(advice-add #'org-shifttab :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent t func args)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
