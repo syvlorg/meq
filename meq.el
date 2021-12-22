@@ -196,6 +196,27 @@ session as the current block. ARG has same meaning as in
 
         (outline-on-heading-p)))
 
+;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L12889            
+(unless (fboundp 'org-at-property-drawer-p)
+    (defun org-at-property-drawer-p ()
+  "Non-nil when point is at the first line of a property drawer."
+  (org-with-wide-buffer
+   (beginning-of-line)
+   (and (looking-at org-property-drawer-re)
+	(or (bobp)
+	    (progn
+	      (forward-line -1)
+	      (cond ((org-at-heading-p))
+		    ((looking-at org-planning-line-re)
+		     (forward-line -1)
+		     (org-at-heading-p))
+		    ((looking-at org-comment-regexp)
+		     (forward-line -1)
+		     (while (and (not (bobp)) (looking-at org-comment-regexp))
+		       (forward-line -1))
+		     (looking-at org-comment-regexp))
+		    (t nil))))))))
+
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/26840/31428
 ;; User: https://emacs.stackexchange.com/users/253/dan
@@ -206,7 +227,6 @@ session as the current block. ARG has same meaning as in
     (interactive)
     (or (meq/outline-on-heading-p)
 
-                                         ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L12889
         (when (derived-mode-p 'org-mode) (or (org-at-property-drawer-p)
 
             ;; From: https://github.com/bzg/org-mode/blob/edddc7d149b8668a830443b12db14075beb28607/lisp/org.el#L20809
@@ -236,18 +256,18 @@ session as the current block. ARG has same meaning as in
 (defun meq/prior-char (&optional *point) (interactive) (char-syntax (if *point (char-before *point) (preceding-char))))
 
 ;;;###autoload
-(defun meq/whitespace-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char " ") ,(string-to-char "\t"))))
+(defun meq/whitespace-before-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char " ") ,(string-to-char "\t"))))
 
 ;;;###autoload
 (defun meq/newline-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
 
 ;;;###autoload
-(defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-p)) (meq/whitespace-p)) (delete-backward-char 1)))
+(defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-before-p)) (meq/whitespace-before-p)) (delete-backward-char 1)))
 
 ;;;###autoload
 (defun meq/delete-white-or-word nil (interactive) (cond
     ((bolp) (delete-backward-char 1))
-    ((meq/whitespace-p) (if (meq/whitespace-p (1- (point)))
+    ((meq/whitespace-before-p) (if (meq/whitespace-before-p (1- (point)))
                         (meq/delete-while-white)
                         (delete-backward-char 1)
                         (meq/delete-while-white t)))
@@ -275,7 +295,7 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/untab (&optional tab-size-in-spaces) (interactive) (mapc
-    #'(lambda (i) (interactive) (when (meq/whitespace-p) (delete-backward-char 1)))
+    #'(lambda (i) (interactive) (when (meq/whitespace-before-p) (delete-backward-char 1)))
     (number-sequence 1 (or tab-size-in-spaces meq/var/tab-size-in-spaces))))
 
 ;;;###autoload

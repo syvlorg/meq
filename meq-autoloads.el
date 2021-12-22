@@ -128,7 +128,7 @@ Returns non-nil if point is on an unfolded org object." t nil)
 
 \(fn &optional *POINT)" t nil)
 
-(autoload 'meq/whitespace-p "meq" "\
+(autoload 'meq/whitespace-before-p "meq" "\
 
 
 \(fn &optional *POINT)" t nil)
