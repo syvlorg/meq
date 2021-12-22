@@ -118,7 +118,10 @@ Returns non-nil if point is on a folded org object." t nil)
 (autoload 'meq/unfolded-p "meq" "\
 Returns non-nil if point is on an unfolded org object." t nil)
 
-(autoload 'meq/go-to-parent "meq" nil t nil)
+(autoload 'meq/go-to-parent "meq" "\
+
+
+\(fn &optional STEPS)" t nil)
 
 (autoload 'meq/prior-char "meq" "\
 

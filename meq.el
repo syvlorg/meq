@@ -227,11 +227,7 @@ session as the current block. ARG has same meaning as in
 ;; Answer: https://emacs.stackexchange.com/a/37791/31428
 ;; User: https://emacs.stackexchange.com/users/12497/toothrot
 ;;;###autoload
-(defun meq/go-to-parent nil (interactive)
-    (with-eval-after-load 'org
-        (outline-up-heading (if (and (or (org-at-heading-p) (invisible-p (point))) (invisible-p (point-at-eol))
-                (>= (org-current-level) 2))
-            1 0))))
+(defun meq/go-to-parent (&optional steps) (interactive) (ignore-error (outline-up-heading (or steps 0))))
 
 ;; Adapted From:
 ;; Answer: https://stackoverflow.com/a/27799515
@@ -259,13 +255,16 @@ session as the current block. ARG has same meaning as in
 
 ;;;###autoload
 (defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
-    (apply func args)
+    (progn (while (invisible-p (point)) (backward-char)) (apply func args))
     (if (meq/outline-on-heading-p)
         (cond
             ((meq/fbatp aiern-mode) (aiern-close-fold))
             ((meq/fbatp evil-mode) (evil-close-fold))
             (t (outline-hide-subtree)))
-        (apply func args))
+        (cond
+            ((meq/fbatp aiern-mode) (if (meq/foldable-p) (apply func args) (meq/go-to-parent) (aiern-close-fold)))
+            ((meq/fbatp evil-mode) (if (meq/foldable-p) (apply func args) (meq/go-to-parent) (evil-close-fold)))
+            (t (apply func args))))
     (message "FOLDED")))
 
 ;; Adapted From:
