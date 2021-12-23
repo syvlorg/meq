@@ -239,6 +239,11 @@ Widen if buffer is narrowed, narrow-dwim otherwise.
 
 \(fn P)" t nil)
 
+(autoload 'meq/add-to-ignored-modal-modes "meq" "\
+
+
+\(fn **MODE &rest ARGS)" t t)
+
 (autoload 'meq/disable-all-modal-modes "meq" "\
 
 

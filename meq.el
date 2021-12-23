@@ -279,6 +279,7 @@ session as the current block. ARG has same meaning as in
         (when (invisible-p (point))
             (beginning-of-line)
             (when (invisible-p (point)) (while (invisible-p (point)) (backward-char))))
+        ;; (previous-single-char-property-change (point) (text-properties-at (point)))
         (apply func args))
     (if (meq/outline-on-heading-p)
         (cond
@@ -508,6 +509,15 @@ session as the current block. ARG has same meaning as in
                 (LaTeX-narrow-to-environment))
                 (t (narrow-to-defun)))
             (meq/src-mode-settings)))
+
+;;;###autoload
+(defmacro meq/add-to-ignored-modal-modes (**mode &rest args) (interactive)
+    (let* ((*mode (symbol-name **mode))
+            (mode (meq/inconcat *mode "-mode")))
+        (eval `(progn ,@args))
+        (push mode meq/var/ignored-modal-modes)
+        (push *mode meq/var/ignored-modal-prefixes)
+        (funcall mode 1)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/42240
