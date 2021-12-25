@@ -278,10 +278,11 @@ session as the current block. ARG has same meaning as in
 ;;;###autoload
 (defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
     (progn
-        (when (invisible-p (point))
-            (beginning-of-line)
-            (when (invisible-p (point)) (while (invisible-p (point)) (backward-char))))
-        ;; (previous-single-char-property-change (point) (text-properties-at (point)))
+        ;; (when (invisible-p (point)) (beginning-of-line) (when (invisible-p (point)) (while (invisible-p (point)) (backward-char))))
+
+        ;; Adapted From: https://www.reddit.com/r/emacs/comments/rlxkjn/move_cursor_from_invisible_region_to_visible/
+        (when (invisible-p (point)) (while (invisible-p (1- (point))) (goto-char (previous-single-char-property-change (point) 'invisible))))
+        
         (apply func args))
     (if (meq/outline-on-heading-p)
         (cond
@@ -1187,8 +1188,8 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/backslash-toggle (&optional ua) (interactive "p")
-    (if current-prefix-arg (cond
-                            ((= ua 4) (meq/toggle-which-key)))
+    (if current-prefix-arg
+        (cond ((= ua 4) (meq/toggle-which-key)))
         (meq/dired-sidebar-toggle)))
 
 (provide 'meq)
