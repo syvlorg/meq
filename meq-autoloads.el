@@ -53,6 +53,16 @@
 
 (autoload 'meq/timestamp "meq" nil t nil)
 
+(autoload 'meq/uuid "meq" "\
+
+
+\(fn &rest ARGS)" t nil)
+
+(autoload 'meq/named-uuid "meq" "\
+
+
+\(fn NAME)" t nil)
+
 (autoload 'meq/pget "meq" "\
 
 

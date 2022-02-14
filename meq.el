@@ -1,7 +1,7 @@
 ;; meq.el
 
 
-;; [[file:~/.emacs.d/lib/meq/README.org::*meq.el][meq.el:1]]
+;; [[file:README.org::*meq.el][meq.el:1]]
 ;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Jeet Ray
@@ -35,6 +35,7 @@
 (require 's)
 (require 'dash)
 (require 'key-chord)
+(require 'uuidgen)
 
 (defvar meq/var/modal-modes nil)
 (defvar meq/var/ignored-modal-modes nil)
@@ -82,6 +83,13 @@
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
+
+;;;###autoload
+(defun meq/uuid (&rest args) (interactive) (apply (intern (concat "uuidgen-" (or (car args) "5")))
+                                                  (or (cdr args) (list (uuidgen-4) (uuidgen-4)))))
+
+;;;###autoload
+(defun meq/named-uuid (name) (interactive) (meq/uuid "5" (meq/uuid) name))
 
 ;;;###autoload
 (defun meq/pget (item plist) (or (ignore-error (plist-get plist item)) (cl-getf plist item)))
