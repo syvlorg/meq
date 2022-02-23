@@ -245,6 +245,36 @@ session as the current block. ARG has same meaning as in
 
         (invisible-p (point-at-eol))))
 
+;; Adapted From: https://github.com/bzg/org-mode/blob/main/lisp/org-id.el#L275
+;;;###autoload
+(defun meq/org-custom-id-get (&optional pom create prefix)
+  "Get the CUSTOM_ID property of the entry at point-or-marker POM.
+If POM is nil, refer to the entry at point.
+If the entry does not have an CUSTOM_ID, the function returns nil.
+However, when CREATE is non-nil, create an CUSTOM_ID if none is present already.
+PREFIX will be passed through to `org-id-new'.
+In any case, the CUSTOM_ID of the entry is returned."
+  (org-with-point-at pom
+    (let ((custom-id (org-entry-get nil "CUSTOM_ID")))
+      (cond
+       ((and custom-id (stringp custom-id) (string-match "\\S-" custom-id))
+	custom-id)
+       (create
+	(setq custom-id (org-id-new prefix))
+	(org-entry-put pom "CUSTOM_ID" custom-id)
+	custom-id)))))
+
+;; Adapted From: https://github.com/bzg/org-mode/blob/main/lisp/org-id.el#L253
+;;;###autoload
+(defun meq/org-custom-id-get-create (&optional force)
+  "Create an CUSTOM_ID for the current entry and return it.
+If the entry already has an CUSTOM_ID, just return it.
+With optional argument FORCE, force the creation of a new CUSTOM_ID."
+  (interactive "P")
+  (when force
+    (org-entry-put (point) "CUSTOM_ID" nil))
+  (meq/org-custom-id-get (point) 'create))
+
 ;;;###autoload
 (defun meq/folded-p nil "Returns non-nil if point is on a folded org object." (interactive) (and (meq/foldable-p) (invisible-p (point-at-eol))))
 

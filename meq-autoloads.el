@@ -122,6 +122,23 @@ Returns non-nil if point is on a headline." t nil)
 (autoload 'meq/foldable-p "meq" "\
 Returns non-nil if point can fold." t nil)
 
+(autoload 'meq/org-custom-id-get "meq" "\
+Get the CUSTOM_ID property of the entry at point-or-marker POM.
+If POM is nil, refer to the entry at point.
+If the entry does not have an CUSTOM_ID, the function returns nil.
+However, when CREATE is non-nil, create an CUSTOM_ID if none is present already.
+PREFIX will be passed through to `org-id-new'.
+In any case, the CUSTOM_ID of the entry is returned.
+
+\(fn &optional POM CREATE PREFIX)" nil nil)
+
+(autoload 'meq/org-custom-id-get-create "meq" "\
+Create an CUSTOM_ID for the current entry and return it.
+If the entry already has an CUSTOM_ID, just return it.
+With optional argument FORCE, force the creation of a new CUSTOM_ID.
+
+\(fn &optional FORCE)" t nil)
+
 (autoload 'meq/folded-p "meq" "\
 Returns non-nil if point is on a folded org object." t nil)
 
