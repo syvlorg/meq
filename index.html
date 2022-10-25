@@ -1,8 +1,50 @@
-;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-10-25 Tue 02:57 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="author" content="Jeet Ray" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://combinatronics.io/sylvorg/settings/main/src/styles/primary/syvl.css" />
+<link rel="icon" href="https://combinatronics.io/sylvorg/settings/main/src/icons/favicons/shiny-zigzagoon-galar.ico" sizes="any" />
+<link rel="icon" href="https://combinatronics.io/sylvorg/settings/main/src/icons/favicons/shiny-zigzagoon-galar.svg" />
+<link rel="manifest" href="https://combinatronics.io/sylvorg/settings/main/manifest.json" />
+<link rel="stylesheet" type="text/css" href="https://combinatronics.io/sylvorg/settings/main/src/styles/highlight/paraiso-dark.min.css" />
+<script src="https://combinatronics.io/sylvorg/settings/main/src/scripts/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<div class="header">
+<h1>We Are Syvlorg.</h1>
+<a href="">About Me</a>
+<a href="">About This Website</a>
+<a href="">About Syvlorg</a>
+<a href="https://resume.syvl.org">Résumé</a>
+<a href="https://index.syvl.org">Index</a>
+</div>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgd94d495">meq.el</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd94d495" class="outline-2">
+<h2 id="orgd94d495">meq.el</h2>
+<div class="outline-text-2" id="text-orgd94d495">
+<div class="org-src-container">
+<pre><code class="language-lisp match-braces rainbow-braces">;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Jeet Ray
 
-;; Author: Jeet Ray <aiern@protonmail.com>
+;; Author: Jeet Ray &lt;aiern@protonmail.com&gt;
 ;; Keywords: lisp
 ;; Version: 0.0.1
 
@@ -17,7 +59,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 ;;; Commentary:
 
@@ -51,19 +93,19 @@
 (defvar meq/var/tab-size-in-spaces 4)
 
 ;;;###autoload
-(defun meq/ued (&rest args) (f-full (apply #'f-join user-emacs-directory args)))
+(defun meq/ued (&amp;rest args) (f-full (apply #'f-join user-emacs-directory args)))
 ;;;###autoload
-(defun meq/ued-lib (&rest args) (f-full (apply #'meq/ued "lib" args)))
+(defun meq/ued-lib (&amp;rest args) (f-full (apply #'meq/ued "lib" args)))
 ;;;###autoload
-(defun meq/ued-siluam (&rest args) (f-full (apply #'meq/ued "siluam" args)))
+(defun meq/ued-siluam (&amp;rest args) (f-full (apply #'meq/ued "siluam" args)))
 ;;;###autoload
-(defun meq/ued-profiles (&rest args) (f-full (apply #'meq/ued "profiles" args)))
+(defun meq/ued-profiles (&amp;rest args) (f-full (apply #'meq/ued "profiles" args)))
 ;;;###autoload
-(defun meq/ued-settings (&rest args) (f-full (apply #'meq/ued "settings" args)))
+(defun meq/ued-settings (&amp;rest args) (f-full (apply #'meq/ued "settings" args)))
 ;;;###autoload
-(defun meq/ued-local (&rest args) (f-full (apply #'meq/ued ".local" args)))
+(defun meq/ued-local (&amp;rest args) (f-full (apply #'meq/ued ".local" args)))
 ;;;###autoload
-(defun meq/cl (&rest args)
+(defun meq/cl (&amp;rest args)
     (let* ((path (if (f-exists? (car args)) (car args) (apply #'meq/ued args)))
             (path-exists (f-exists? path))
             (org-file* (when path-exists (f-ext path)))
@@ -72,16 +114,16 @@
             (if org-file (org-babel-load-file path t) (load path)))))
 
 ;;;###autoload
-(defun meq/load-emacs-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-lib file))) files))
+(defun meq/load-emacs-file (&amp;rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-lib file))) files))
 
 ;;;###autoload
-(defun meq/load-siluam-file (&rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-siluam file))) files))
+(defun meq/load-siluam-file (&amp;rest files) (mapc #'(lambda (file) (interactive) (load (meq/ued-siluam file))) files))
 
 ;;;###autoload
 (defun meq/timestamp nil (interactive) (format-time-string "%Y%m%d%H%M%S%N"))
 
 ;;;###autoload
-(defun meq/uuid (&rest args) (interactive) (apply (intern (concat "uuidgen-" (or (car args) "5")))
+(defun meq/uuid (&amp;rest args) (interactive) (apply (intern (concat "uuidgen-" (or (car args) "5")))
                                                   (or (cdr args) (list (uuidgen-4) (uuidgen-4)))))
 
 ;;;###autoload
@@ -91,7 +133,7 @@
 (defun meq/pget (item plist) (or (ignore-error (plist-get plist item)) (cl-getf plist item)))
 
 ;;;###autoload
-(defun meq/basename (&optional file) (interactive) (car (split-string (file-name-base (or file buffer-file-name)) "\\.")))
+(defun meq/basename (&amp;optional file) (interactive) (car (split-string (file-name-base (or file buffer-file-name)) "\\.")))
 
 ;; Adapted From: https://emacsredux.com/blog/2019/01/10/convert-a-keyword-to-a-symbol/
 ;;;###autoload
@@ -100,7 +142,7 @@
   (substring (symbol-name keyword) 1))
 
 ;;;###autoload
-(defun meq/inconcat (&rest strings) (intern (apply #'concat strings)))
+(defun meq/inconcat (&amp;rest strings) (intern (apply #'concat strings)))
 
 ;; Adapted From:
 ;; Answer: https://stackoverflow.com/a/10088995/10827766
@@ -119,7 +161,7 @@
 ;;;###autoload
 (defun meq/listtp (list*) (interactive) (and list* (or (consp list*) (listp list*))))
 
-;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&utm_medium=web2x&context=3
+;; Adapted From: https://www.reddit.com/r/emacs/comments/ahcmi7/exwm_variable_to_detect_if_it_is_being_used/eedfhs0?utm_source=share&amp;utm_medium=web2x&amp;context=3
 ;;;###autoload
 (defun meq/exwm-p nil (interactive) (when (featurep 'exwm) (frame-parameter (selected-frame) 'exwm-active)))
 
@@ -131,7 +173,7 @@
 
 ;; Adapted From: https://kitchingroup.cheme.cmu.edu/blog/2015/03/19/Restarting-org-babel-sessions-in-org-mode-more-effectively/
 ;;;###autoload
-(defun meq/org-babel-restart-session-to-point (&optional arg)
+(defun meq/org-babel-restart-session-to-point (&amp;optional arg)
   "Restart session up to the src-block in the current point.
 Goes to beginning of buffer and executes each code block with
 `org-babel-execute-src-block' that has the same language and
@@ -156,7 +198,7 @@ session as the current block. ARG has same meaning as in
                (this-session (cdr (assoc :session this-params))))
             (when
                 (and
-                 (< (point) (marker-position current-point))
+                 (&lt; (point) (marker-position current-point))
                  (string= lang this-lang)
                  (src-block-in-session-p session))
               (org-babel-execute-src-block arg)))
@@ -244,7 +286,7 @@ session as the current block. ARG has same meaning as in
 
 ;; Adapted From: https://github.com/bzg/org-mode/blob/main/lisp/org-id.el#L275
 ;;;###autoload
-(defun meq/org-custom-id-get (&optional pom create prefix)
+(defun meq/org-custom-id-get (&amp;optional pom create prefix)
   "Get the CUSTOM_ID property of the entry at point-or-marker POM.
 If POM is nil, refer to the entry at point.
 If the entry does not have an CUSTOM_ID, the function returns nil.
@@ -263,7 +305,7 @@ In any case, the CUSTOM_ID of the entry is returned."
 
 ;; Adapted From: https://github.com/bzg/org-mode/blob/main/lisp/org-id.el#L253
 ;;;###autoload
-(defun meq/org-custom-id-get-create (&optional force)
+(defun meq/org-custom-id-get-create (&amp;optional force)
   "Create an CUSTOM_ID for the current entry and return it.
 If the entry already has an CUSTOM_ID, just return it.
 With optional argument FORCE, force the creation of a new CUSTOM_ID."
@@ -282,22 +324,22 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/a/37791/31428
 ;; User: https://emacs.stackexchange.com/users/12497/toothrot
 ;;;###autoload
-(defun meq/go-to-parent (&optional steps) (interactive) (ignore-error (outline-up-heading (or steps 0))))
+(defun meq/go-to-parent (&amp;optional steps) (interactive) (ignore-error (outline-up-heading (or steps 0))))
 
 ;; Adapted From:
 ;; Answer: https://stackoverflow.com/a/27799515
 ;; User: https://stackoverflow.com/users/850781/sds
 ;;;###autoload
-(defun meq/prior-char (&optional *point) (interactive) (char-syntax (if *point (char-before *point) (preceding-char))))
+(defun meq/prior-char (&amp;optional *point) (interactive) (char-syntax (if *point (char-before *point) (preceding-char))))
 
 ;;;###autoload
-(defun meq/whitespace-before-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char " ") ,(string-to-char "\t"))))
+(defun meq/whitespace-before-p (&amp;optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char " ") ,(string-to-char "\t"))))
 
 ;;;###autoload
-(defun meq/newline-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
+(defun meq/newline-p (&amp;optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
 
 ;;;###autoload
-(defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-before-p)) (meq/whitespace-before-p)) (delete-backward-char 1)))
+(defun meq/delete-while-white (&amp;optional *not) (interactive) (while (if *not (not (meq/whitespace-before-p)) (meq/whitespace-before-p)) (delete-backward-char 1)))
 
 ;;;###autoload
 (defun meq/delete-white-or-word nil (interactive) (cond
@@ -309,7 +351,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
     (t (meq/delete-while-white t))))
 
 ;;;###autoload
-(defun meq/outline-cycle (func &rest args) (interactive) (if (meq/folded-p)
+(defun meq/outline-cycle (func &amp;rest args) (interactive) (if (meq/folded-p)
     (progn
         ;; (when (invisible-p (point)) (beginning-of-line) (when (invisible-p (point)) (while (invisible-p (point)) (backward-char))))
 
@@ -332,10 +374,10 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/a/54550
 ;; User: https://emacs.stackexchange.com/users/21533/jagrg
 ;;;###autoload
-(defun meq/tab (&optional tab-size-in-spaces) (insert (make-string (or tab-size-in-spaces meq/var/tab-size-in-spaces) ?\s)))
+(defun meq/tab (&amp;optional tab-size-in-spaces) (insert (make-string (or tab-size-in-spaces meq/var/tab-size-in-spaces) ?\s)))
 
 ;;;###autoload
-(defun meq/untab (&optional tab-size-in-spaces) (interactive) (mapc
+(defun meq/untab (&amp;optional tab-size-in-spaces) (interactive) (mapc
     #'(lambda (i) (interactive) (when (meq/whitespace-before-p) (delete-backward-char 1)))
     (number-sequence 1 (or tab-size-in-spaces meq/var/tab-size-in-spaces))))
 
@@ -343,8 +385,8 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 (defun meq/outline-indent (untab) (interactive) (if untab (meq/untab) (meq/tab)))
 
 ;;;###autoload
-(defun meq/outline-cycle-indent (untab func &rest args) (interactive)
-    (let* ((oci (lambda (untab func &rest args) (interactive) (if (meq/foldable-p) (apply #'meq/outline-cycle func args) (meq/outline-indent untab)))))
+(defun meq/outline-cycle-indent (untab func &amp;rest args) (interactive)
+    (let* ((oci (lambda (untab func &amp;rest args) (interactive) (if (meq/foldable-p) (apply #'meq/outline-cycle func args) (meq/outline-indent untab)))))
         (cond
             ((meq/fbatp aiern-mode) (cond
                 ((member aiern-state '(normal visual)) (apply #'meq/outline-cycle func args))
@@ -357,10 +399,10 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
             (t (apply oci untab func args)))))
 
 ;;;###autoload
-(advice-add #'org-cycle :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))
+(advice-add #'org-cycle :around #'(lambda (func &amp;rest args) (interactive) (apply #'meq/outline-cycle-indent nil func args)))
 
 ;;;###autoload
-(advice-add #'org-shifttab :around #'(lambda (func &rest args) (interactive) (apply #'meq/outline-cycle-indent t func args)))
+(advice-add #'org-shifttab :around #'(lambda (func &amp;rest args) (interactive) (apply #'meq/outline-cycle-indent t func args)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/questions/28098/how-to-change-org-mode-babel-tangle-write-to-file-way-as-append-instead-of-overr/38898#38898
@@ -379,7 +421,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
 ;; User: https://emacs.stackexchange.com/users/2370/tobias
 ;;;###autoload
-(defun meq/org-babel-tangle-collect-blocks-handle-tangle-list (&optional language tangle-file)
+(defun meq/org-babel-tangle-collect-blocks-handle-tangle-list (&amp;optional language tangle-file)
     "Can be used as :override advice for `org-babel-tangle-collect-blocks'.
     Handles lists of :tangle files."
     (when (featurep 'org)
@@ -415,7 +457,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/questions/39032/tangle-the-same-src-block-to-different-files/39039#39039
 ;; User: https://emacs.stackexchange.com/users/2370/tobias
 ;;;###autoload
-(defun meq/org-babel-tangle-single-block-handle-tangle-list (oldfun block-counter &optional only-this-block)
+(defun meq/org-babel-tangle-single-block-handle-tangle-list (oldfun block-counter &amp;optional only-this-block)
     "Can be used as :around advice for `org-babel-tangle-single-block'.
     If the :tangle header arg is a list of files. Handle all files"
     (when (featurep 'org)
@@ -431,7 +473,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
                     (let (old-get-info)
                     (cl-letf* (((symbol-function 'old-get-info) (symbol-function 'org-babel-get-src-block-info))
                         ((symbol-function 'org-babel-get-src-block-info)
-                        `(lambda (&rest get-info-args)
+                        `(lambda (&amp;rest get-info-args)
                             (let* ((info (apply 'old-get-info get-info-args))
                                 (params (nth 2 info))
                                 (tfile-cons (assoc :tangle params)))
@@ -444,7 +486,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
             ret))))))
 
 ;;;###autoload
-(defun meq/get-tangled-file-name (&optional file*) (interactive)
+(defun meq/get-tangled-file-name (&amp;optional file*) (interactive)
     (with-current-buffer (get-file-buffer (or file* buffer-file-name))
 
         ;; Adapted From:
@@ -461,7 +503,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
             (f-full (cadr split-line)))))
 
 ;;;###autoload
-(defun meq/org-babel-detangle-and-return (&optional file* origin*) (interactive)
+(defun meq/org-babel-detangle-and-return (&amp;optional file* origin*) (interactive)
     (when (featurep 'org)
         (save-current-buffer
             (let* ((file (or file* buffer-file-name))
@@ -480,13 +522,13 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
                 (delete-window (previous-window))))))
 
 ;;;###autoload
-(defun meq/org-babel-detangle-kill-and-return (file &optional origin) (interactive)
+(defun meq/org-babel-detangle-kill-and-return (file &amp;optional origin) (interactive)
     (let* ((file-buffer (get-file-buffer file)))
         (meq/org-babel-detangle-and-return file origin)
         (when file-buffer (kill-buffer file-buffer))))
 
 ;;;###autoload
-(defun meq/generate-obdar (file &optional origin)
+(defun meq/generate-obdar (file &amp;optional origin)
     (add-hook 'after-save-hook #'(lambda nil (interactive)
         (when (eq (get-file-buffer file) (current-buffer))
             (meq/org-babel-detangle-and-return file origin)))))
@@ -547,7 +589,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
             (meq/src-mode-settings)))
 
 ;;;###autoload
-(defmacro meq/add-to-ignored-modal-modes (**mode &rest args) (interactive)
+(defmacro meq/add-to-ignored-modal-modes (**mode &amp;rest args) (interactive)
     (let* ((*mode (symbol-name **mode))
             (mode (meq/inconcat *mode "-mode")))
         (eval `(progn ,@args))
@@ -559,7 +601,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/a/42240
 ;; User: user12563
 ;;;###autoload
-(defun meq/disable-all-modal-modes (&optional keymap include-ignored) (interactive)
+(defun meq/disable-all-modal-modes (&amp;optional keymap include-ignored) (interactive)
     (mapc
         #'(lambda (mode-symbol)
             ;; some symbols are functions which aren't normal mode functions
@@ -594,7 +636,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 ;; Answer: https://emacs.stackexchange.com/questions/12997/how-do-i-use-nadvice/14827#14827
 ;; User: https://emacs.stackexchange.com/users/2308/kdb
 ;;;###autoload
-(defun meq/which-key--hide-popup (&optional force dont-disable-modal-modes) (interactive)
+(defun meq/which-key--hide-popup (&amp;optional force dont-disable-modal-modes) (interactive)
     (let* ((popup-was-up (which-key--popup-showing-p)))
         (when force (setq meq/var/which-key-really-dont-show t))
         (unless dont-disable-modal-modes (meq/disable-all-modal-modes))
@@ -609,7 +651,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 
             (setq meq/var/which-key-first-show nil))))
 
-;; Adapted From: https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/cxb78ul?utm_source=share&utm_medium=web2x&context=3
+;; Adapted From: https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/cxb78ul?utm_source=share&amp;utm_medium=web2x&amp;context=3
 ;; More Information Here: https://www.gnu.org/software/emacs/manual/html_node/elisp/Display-Tables.html
 ;;;###autoload
 (defun meq/window-divider nil
@@ -623,7 +665,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 (add-hook 'window-configuration-change-hook #'meq/window-divider)
 
 ;;;###autoload
-(defun meq/which-key--show-popup (&optional keymap force disable-modal-modes) (interactive)
+(defun meq/which-key--show-popup (&amp;optional keymap force disable-modal-modes) (interactive)
     (let ((show-popup #'(lambda (keymap) (interactive)
             (which-key-mode 1)
             (setq which-key-persistent-popup t)
@@ -652,12 +694,12 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
     aiern-state-properties))
 
 ;;;###autoload
-(defun meq/which-key--refresh-popup (&optional keymap) (interactive)
+(defun meq/which-key--refresh-popup (&amp;optional keymap) (interactive)
     (meq/which-key--hide-popup t)
     (meq/which-key--show-popup keymap t))
 
 ;;;###autoload
-(defun meq/toggle-which-key (&optional keymap) (interactive)
+(defun meq/toggle-which-key (&amp;optional keymap) (interactive)
     (if (cosmoem-any-popup-showing-p)
         (meq/which-key--hide-popup t)
         (meq/which-key--show-popup keymap t)
@@ -665,7 +707,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
         ))
 
 ;;;###autoload
-(defun meq/which-key-show-top-level (&optional keymap) (interactive)
+(defun meq/which-key-show-top-level (&amp;optional keymap) (interactive)
     (let* ((current-map (or (symbol-value keymap) (or overriding-terminal-local-map global-map)))
         (which-key-function
             ;; #'which-key-show-top-level
@@ -685,7 +727,7 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 
 ;; Adapted From: https://github.com/justbur/emacs-which-key/blob/master/which-key.el#L1766
 (defun which-key--get-keymap-bindings-advice
-    (keymap &optional start prefix filter all evil aiern)
+    (keymap &amp;optional start prefix filter all evil aiern)
   "Retrieve top-level bindings from KEYMAP.
 PREFIX limits bindings to those starting with this key
 sequence. START is a list of existing bindings to add to.  If ALL
@@ -696,10 +738,10 @@ extract active aiern bidings."
         (ignore '(self-insert-command ignore ignore-event company-ignore))
         (evil-map
          (when (and evil (bound-and-true-p evil-local-mode))
-           (lookup-key keymap (kbd (format "<%s-state>" evil-state)))))
+           (lookup-key keymap (kbd (format "&lt;%s-state&gt;" evil-state)))))
         (aiern-map
          (when (and aiern (bound-and-true-p aiern-local-mode))
-           (lookup-key keymap (kbd (format "<%s-state>" aiern-state))))))
+           (lookup-key keymap (kbd (format "&lt;%s-state&gt;" aiern-state))))))
     (when (keymapp evil-map)
       (setq bindings (which-key--get-keymap-bindings-1
                       evil-map bindings prefix filter all ignore)))
@@ -714,9 +756,9 @@ extract active aiern bidings."
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/14956/31428
 ;; User: https://emacs.stackexchange.com/users/25/gilles-so-stop-being-evil
-;; (with-eval-after-load 'evil (defun meq/newline-and-indent-advice (func &rest arguments)
+;; (with-eval-after-load 'evil (defun meq/newline-and-indent-advice (func &amp;rest arguments)
 ;;;###autoload
-(defun meq/newline-and-indent-advice (func &rest arguments)
+(defun meq/newline-and-indent-advice (func &amp;rest arguments)
     (if (window-minibuffer-p)
         (cond
             ((evil-ex-p) (evil-ex-execute (minibuffer-contents)))
@@ -726,7 +768,7 @@ extract active aiern bidings."
         ;; )
 
 ;;;###autoload
-(defun meq/current-modal-modes (&optional include-ignored) (interactive)
+(defun meq/current-modal-modes (&amp;optional include-ignored) (interactive)
     (-filter #'(lambda (mode) (interactive) (eval `(bound-and-true-p ,mode)))
         (append (when include-ignored meq/var/ignored-modal-modes) meq/var/modal-modes)))
 
@@ -794,7 +836,7 @@ extract active aiern bidings."
 (add-hook 'post-command-hook 'meq/pre-post-command-hook-command)
 
 ;;;###autoload
-(defun meq/evil-ex-advice (func &rest arguments)
+(defun meq/evil-ex-advice (func &amp;rest arguments)
     (meq/which-key--hide-popup nil t)
     (setq meq/var/last-global-map (current-global-map))
     (use-global-map global-map)
@@ -811,7 +853,7 @@ extract active aiern bidings."
 
 ;; From: https://github.com/hlissner/doom-emacs/blob/develop/core/core-keybinds.el#L83
 ;;;###autoload
-(defun meq/doom/escape (&optional interactive)
+(defun meq/doom/escape (&amp;optional interactive)
   "Run `doom-escape-hook'."
   (interactive (list 'interactive))
   (cond ((minibuffer-window-active-p (minibuffer-window))
@@ -895,7 +937,7 @@ be ignored by `god-execute-with-current-bindings'."
     (when (featurep 'exwm) (when (meq/exwm-p) (exwm-reset))))
 
 ;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
-(defun meq/rename-current-buffer-file (&optional new-name*)
+(defun meq/rename-current-buffer-file (&amp;optional new-name*)
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
@@ -936,7 +978,7 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;; Adapted From: https://github.com/ch11ng/exwm/blob/master/exwm-config.el#L52
 ;;;###autoload
-(defun meq/run (command &optional name)
+(defun meq/run (command &amp;optional name)
     (when (meq/exwm-p) (exwm-workspace-switch-create (1+ (exwm-workspace--count))))
     (start-process-shell-command (or name command) nil command)
     (when (and (meq/exwm-p) exwm--floating-frame) (exwm-floating--unset-floating exwm--id)))
@@ -956,7 +998,7 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;; Adapted From: https://github.com/ch11ng/exwm/blob/master/exwm-workspace.el#L978
 ;;;###autoload
-(defun meq/switch-to-buffer-advice (func &rest args)
+(defun meq/switch-to-buffer-advice (func &amp;rest args)
     "Make the current Emacs window display another buffer."
     (interactive
     (let ((inhibit-quit t))
@@ -1033,7 +1075,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/test nil (interactive) (message (meq/timestamp)))
 
 ;;;###autoload
-(defun meq/which-key-change (keymap key name &optional hook) (interactive)
+(defun meq/which-key-change (keymap key name &amp;optional hook) (interactive)
     (when (featurep 'which-key)
         (let* ((keys (split-string key " "))
                 (keymap-name (symbol-name (meq/keymap-symbol keymap)))
@@ -1059,7 +1101,7 @@ be ignored by `god-execute-with-current-bindings'."
                     (eval (car (read-from-string (format "(progn %s)" super-lookup)))))))))))
 
 ;;;###autoload
-(defun meq/which-key-change-ryo (key name &optional hook) (interactive)
+(defun meq/which-key-change-ryo (key name &amp;optional hook) (interactive)
     `(when (featurep 'ryo-modal)
         (meq/which-key-change ryo-modal-mode-map ,key ,name ,hook)))
 
@@ -1067,11 +1109,11 @@ be ignored by `god-execute-with-current-bindings'."
 (meq/which-key-change-ryo ";" "meq")
 
 ;;;###autoload
-(defun meq/which-key-change-sorrow (key name &optional hook) (interactive)
+(defun meq/which-key-change-sorrow (key name &amp;optional hook) (interactive)
     (when (featurep 'sorrow)
         (meq/which-key-change sorrow-mode-map key name hook)))
 
-;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&utm_medium=web2x&context=3
+;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&amp;utm_medium=web2x&amp;context=3
 ;; And: https://github.com/raxod502/straight.el#updating-recipe-repositories
 ;;;###autoload
 (defun meq/straight-upgrade nil (interactive)
@@ -1084,7 +1126,7 @@ be ignored by `god-execute-with-current-bindings'."
 ;; Answer: https://emacs.stackexchange.com/a/20122/31428
 ;; User: https://emacs.stackexchange.com/users/962/harald-hanche-olsen
 ;;;###autoload
-(defmacro meq/with-ymm (&rest args)
+(defmacro meq/with-ymm (&amp;rest args)
     (when (featurep 'yasnippet) (yas-minor-mode 1) (eval `(progn ,@args)) (yas-minor-mode 0)))
 
 ;;;###autoload
@@ -1113,7 +1155,7 @@ be ignored by `god-execute-with-current-bindings'."
 (defun meq/two-items-in-cla (item) (meq/two-items-in-list item command-line-args))
 
 ;;;###autoload
-(defmacro meq/if-item-in-list (item list &rest body)
+(defmacro meq/if-item-in-list (item list &amp;rest body)
     (let* ((peabody* (pop body))
             (peabody (if (stringp peabody*) (list peabody*) peabody*)))
         (if (member item list)
@@ -1121,10 +1163,10 @@ be ignored by `god-execute-with-current-bindings'."
             (eval `(progn ,@body)))))
 
 ;;;###autoload
-(defmacro meq/if-item-in-cla (item &rest body) (eval `(meq/if-item-in-list ,item ,command-line-args ,@body)))
+(defmacro meq/if-item-in-cla (item &amp;rest body) (eval `(meq/if-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
-(defmacro meq/if-two-items-in-list (item list &rest body)
+(defmacro meq/if-two-items-in-list (item list &amp;rest body)
     (let* ((value (meq/get-next-in-list item list))
             (peabody* (pop body))
             (return-peabody (and (booleanp peabody*) peabody*))
@@ -1134,50 +1176,50 @@ be ignored by `god-execute-with-current-bindings'."
             (eval `(progn ,@body)))))
 
 ;;;###autoload
-(defmacro meq/if-two-items-in-cla (item &rest body)
+(defmacro meq/if-two-items-in-cla (item &amp;rest body)
     (eval `(meq/if-two-items-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
-(defmacro meq/when-item-in-list (item list &rest body)
+(defmacro meq/when-item-in-list (item list &amp;rest body)
     (when (member item list) (unwind-protect (eval `(progn ,@body)) (delete item list))))
 
 ;;;###autoload
-(defmacro meq/when-item-in-cla (item &rest body)
+(defmacro meq/when-item-in-cla (item &amp;rest body)
     (eval `(meq/when-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
-(defmacro meq/when-two-items-in-list (item list return &rest body)
+(defmacro meq/when-two-items-in-list (item list return &amp;rest body)
     (let* ((value (meq/get-next-in-list item list)))
         (when (member item list) (unwind-protect
                                     (if return value (eval `(progn ,@body)))
                                     (delete item list)))))
 
 ;;;###autoload
-(defmacro meq/when-two-items-in-cla (item return &rest body)
+(defmacro meq/when-two-items-in-cla (item return &amp;rest body)
     (eval `(meq/when-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
-(defmacro meq/unless-item-in-list (item list &rest body)
+(defmacro meq/unless-item-in-list (item list &amp;rest body)
     (unless (meq/item-in-list item list) (eval `(progn ,@body))))
 
 ;;;###autoload
-(defmacro meq/unless-item-in-cla (item &rest body)
+(defmacro meq/unless-item-in-cla (item &amp;rest body)
     (eval `(meq/unless-item-in-list ,item ,command-line-args ,@body)))
 
 ;;;###autoload
-(defmacro meq/unless-two-items-in-list (item list return &rest body)
+(defmacro meq/unless-two-items-in-list (item list return &amp;rest body)
     (let* ((value (meq/get-next-in-list item list)))
         (unless (meq/item-in-list item list) (if return value (eval `(progn ,@body))))))
 
 ;;;###autoload
-(defmacro meq/unless-two-items-in-cla (item return &rest body)
+(defmacro meq/unless-two-items-in-cla (item return &amp;rest body)
     (eval `(meq/unless-two-items-in-list ,item ,command-line-args ,return ,@body)))
 
 ;;;###autoload
 (defun meq/rs* (item) (if (stringp item) item (symbol-name item)))
 
 ;;;###autoload
-(defun meq/rs (item &optional popstar)
+(defun meq/rs (item &amp;optional popstar)
     (cond ((meq/listtp item) (meq/rs* (if popstar (pop item) (car item))))
             (t (meq/rs* item))))
 
@@ -1222,10 +1264,22 @@ be ignored by `god-execute-with-current-bindings'."
             (dired-sidebar-jump-to-sidebar))))
 
 ;;;###autoload
-(defun meq/backslash-toggle (&optional ua) (interactive "p")
+(defun meq/backslash-toggle (&amp;optional ua) (interactive "p")
     (if current-prefix-arg
         (cond ((= ua 4) (meq/toggle-which-key)))
         (meq/dired-sidebar-toggle)))
 
 (provide 'meq)
 ;;; meq.el ends here
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Jeet Ray</p>
+<p class="date">Created: 2022-10-25 Tue 02:57</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
