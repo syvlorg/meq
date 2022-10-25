@@ -22,7 +22,7 @@
     description = "Useful functions for emacs!";
     inputs = rec {
         settings.url = github:sylvorg/settings;
-        titan.url = github:syvlorg/titan;
+        titan.follows = "settings/titan";
         flake-utils.url = github:numtide/flake-utils;
         flake-compat = {
             url = "github:edolstra/flake-compat";
