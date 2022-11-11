@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-10-26 Wed 01:48 -->
+<!-- 2022-11-11 Fri 20:06 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
+<meta name="generator" content="Org mode" />
 <meta name="author" content="Jeet Ray" />
-<meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="https://combinatronics.io/sylvorg/settings/main/src/styles/primary/syvl.css" />
 <link rel="icon" href="https://combinatronics.io/sylvorg/settings/main/src/icons/favicons/shiny-zigzagoon-galar.ico" sizes="any" />
 <link rel="icon" href="https://combinatronics.io/sylvorg/settings/main/src/icons/favicons/shiny-zigzagoon-galar.svg" />
@@ -24,21 +24,43 @@
 <a href="https://resume.syvl.org">Résumé</a>
 <a href="https://index.syvl.org">Index</a>
 </div>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
 </head>
 <body>
-<div id="content" class="content">
-<div id="table-of-contents" role="doc-toc">
+<div id="content">
+<div id="table-of-contents">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
+<div id="text-table-of-contents">
 <ul>
-<li><a href="#org556d1c9">meq.el</a></li>
+<li><a href="#org4f6f159">meq.el</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org556d1c9" class="outline-2">
-<h2 id="org556d1c9">meq.el</h2>
-<div class="outline-text-2" id="text-org556d1c9">
+<div id="outline-container-org4f6f159" class="outline-2">
+<h2 id="org4f6f159">meq.el</h2>
+<div class="outline-text-2" id="text-org4f6f159">
 <div class="org-src-container">
 <pre><code class="language-lisp match-braces rainbow-braces">;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
@@ -787,16 +809,16 @@ extract active aiern bidings."
 
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
-    ;; (if (window-minibuffer-p)
-    (when (featurep 'alloy)
-      (if (or (derived-mode-p 'prog-mode)
-              (derived-mode-p 'text-mode))
-        (unless (lookup-key
-                    alloy-override-mode-map
-                    (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
-        (when (lookup-key
-                alloy-override-mode-map
-                (naked "RET")) (alloy-def :keymaps 'override "RET" nil))))
+    (when (window-minibuffer-p)
+      (when (featurep 'alloy)
+        (if (or (derived-mode-p 'prog-mode)
+                (derived-mode-p 'text-mode))
+          (unless (lookup-key
+                      alloy-override-mode-map
+                      (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+          (when (lookup-key
+                  alloy-override-mode-map
+                  (naked "RET")) (alloy-def :keymaps 'override "RET" nil)))))
     (if (or
             ;; (meq/xwinp)
             (derived-mode-p 'vterm-mode))
@@ -934,7 +956,8 @@ be ignored by `god-execute-with-current-bindings'."
 ;;;###autoload
 (defun meq/reload-emacs nil (interactive)
     (meq/reload-early-init)
-    (when (featurep 'exwm) (when (meq/exwm-p) (exwm-reset))))
+    (when (and (featurep 'exwm) (meq/exwm-p))
+        (exwm-reset)))
 
 ;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
 (defun meq/rename-current-buffer-file (&amp;optional new-name*)
@@ -1120,7 +1143,8 @@ be ignored by `god-execute-with-current-bindings'."
     (when (featurep 'straight) (straight-pull-all)
     (straight-merge-all)
     (straight-freeze-versions))
-    (unless (daemonp) (when (featurep 'restart-emacs) (restart-emacs))))
+    (when (and (not (daemonp)) (featurep 'restart-emacs))
+        (restart-emacs)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/20122/31428
@@ -1278,7 +1302,7 @@ be ignored by `god-execute-with-current-bindings'."
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Jeet Ray</p>
-<p class="date">Created: 2022-10-26 Wed 01:48</p>
+<p class="date">Created: 2022-11-11 Fri 20:06</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -745,16 +745,16 @@ extract active aiern bidings."
 
 ;;;###autoload
 (defun meq/pre-post-command-hook-command nil (interactive)
-    ;; (if (window-minibuffer-p)
-    (when (featurep 'alloy)
-      (if (or (derived-mode-p 'prog-mode)
-              (derived-mode-p 'text-mode))
-        (unless (lookup-key
-                    alloy-override-mode-map
-                    (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
-        (when (lookup-key
-                alloy-override-mode-map
-                (naked "RET")) (alloy-def :keymaps 'override "RET" nil))))
+    (when (window-minibuffer-p)
+      (when (featurep 'alloy)
+        (if (or (derived-mode-p 'prog-mode)
+                (derived-mode-p 'text-mode))
+          (unless (lookup-key
+                      alloy-override-mode-map
+                      (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+          (when (lookup-key
+                  alloy-override-mode-map
+                  (naked "RET")) (alloy-def :keymaps 'override "RET" nil)))))
     (if (or
             ;; (meq/xwinp)
             (derived-mode-p 'vterm-mode))
@@ -892,7 +892,8 @@ be ignored by `god-execute-with-current-bindings'."
 ;;;###autoload
 (defun meq/reload-emacs nil (interactive)
     (meq/reload-early-init)
-    (when (featurep 'exwm) (when (meq/exwm-p) (exwm-reset))))
+    (when (and (featurep 'exwm) (meq/exwm-p))
+        (exwm-reset)))
 
 ;; Adapted From: http://whattheemacsd.com/file-defuns.el-01.html
 (defun meq/rename-current-buffer-file (&optional new-name*)
@@ -1078,7 +1079,8 @@ be ignored by `god-execute-with-current-bindings'."
     (when (featurep 'straight) (straight-pull-all)
     (straight-merge-all)
     (straight-freeze-versions))
-    (unless (daemonp) (when (featurep 'restart-emacs) (restart-emacs))))
+    (when (and (not (daemonp)) (featurep 'restart-emacs))
+        (restart-emacs)))
 
 ;; Adapted From:
 ;; Answer: https://emacs.stackexchange.com/a/20122/31428
