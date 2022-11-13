@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-11-11 Fri 20:06 -->
+<!-- 2022-11-13 Sun 08:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -53,14 +53,14 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org4f6f159">meq.el</a></li>
+<li><a href="#org378da8f">meq.el</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org4f6f159" class="outline-2">
-<h2 id="org4f6f159">meq.el</h2>
-<div class="outline-text-2" id="text-org4f6f159">
+<div id="outline-container-org378da8f" class="outline-2">
+<h2 id="org378da8f">meq.el</h2>
+<div class="outline-text-2" id="text-org378da8f">
 <div class="org-src-container">
 <pre><code class="language-lisp match-braces rainbow-braces">;;; meq.el --- a simple package                     -*- lexical-binding: t; -*-
 
@@ -71,16 +71,16 @@
 ;; Version: 0.0.1
 
 ;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
+;; it under the terms of the GNU alloy Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; GNU alloy Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
+;; You should have received a copy of the GNU alloy Public License
 ;; along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 ;;; Commentary:
@@ -815,10 +815,11 @@ extract active aiern bidings."
                 (derived-mode-p 'text-mode))
           (unless (lookup-key
                       alloy-override-mode-map
-                      (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+                      (naked "RET")) (define-key alloy-override-mode-map (naked "RET") 'newline-and-indent)) ;; (alloy-def :keymaps 'override "RET" 'newline-and-indent))
           (when (lookup-key
                   alloy-override-mode-map
-                  (naked "RET")) (alloy-def :keymaps 'override "RET" nil)))))
+                  (naked "RET")) (define-key alloy-override-mode-map (naked "RET") nil) ;; (alloy-def :keymaps 'override "RET" nil)
+                  ))))
     (if (or
             ;; (meq/xwinp)
             (derived-mode-p 'vterm-mode))
@@ -1302,7 +1303,7 @@ be ignored by `god-execute-with-current-bindings'."
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Jeet Ray</p>
-<p class="date">Created: 2022-11-11 Fri 20:06</p>
+<p class="date">Created: 2022-11-13 Sun 08:53</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

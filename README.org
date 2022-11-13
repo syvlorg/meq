@@ -10,16 +10,16 @@
 ;; Version: 0.0.1
 
 ;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
+;; it under the terms of the GNU alloy Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; GNU alloy Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
+;; You should have received a copy of the GNU alloy Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
@@ -754,10 +754,11 @@ extract active aiern bidings."
                 (derived-mode-p 'text-mode))
           (unless (lookup-key
                       alloy-override-mode-map
-                      (naked "RET")) (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+                      (naked "RET")) (define-key alloy-override-mode-map (naked "RET") 'newline-and-indent)) ;; (alloy-def :keymaps 'override "RET" 'newline-and-indent))
           (when (lookup-key
                   alloy-override-mode-map
-                  (naked "RET")) (alloy-def :keymaps 'override "RET" nil)))))
+                  (naked "RET")) (define-key alloy-override-mode-map (naked "RET") nil) ;; (alloy-def :keymaps 'override "RET" nil)
+                  ))))
     (if (or
             ;; (meq/xwinp)
             (derived-mode-p 'vterm-mode))
