@@ -59,7 +59,7 @@
 ;;;###autoload
 (defun meq/ued-profiles (&rest args) (f-full (apply #'meq/ued "profiles" args)))
 ;;;###autoload
-(defun meq/ued-settings (&rest args) (f-full (apply #'meq/ued "settings" args)))
+(defun meq/ued-bundle (&rest args) (f-full (apply #'meq/ued "bundle" args)))
 ;;;###autoload
 (defun meq/ued-local (&rest args) (f-full (apply #'meq/ued ".local" args)))
 ;;;###autoload
@@ -295,6 +295,9 @@ With optional argument FORCE, force the creation of a new CUSTOM_ID."
 
 ;;;###autoload
 (defun meq/newline-p (&optional *point) (interactive) (member (meq/prior-char *point) `(,(string-to-char "\n"))))
+
+;;;###autoload
+(defun meq/key-chord-p (key-chord) (string= (if (listp key-chord) (car key-chord) key-chord) "<key-chord>"))
 
 ;;;###autoload
 (defun meq/delete-while-white (&optional *not) (interactive) (while (if *not (not (meq/whitespace-before-p)) (meq/whitespace-before-p)) (delete-backward-char 1)))
@@ -751,10 +754,14 @@ extract active aiern bidings."
                 (derived-mode-p 'text-mode))
           (unless (lookup-key
                       alloy-override-mode-map
-                      (naked "RET")) (define-key alloy-override-mode-map (naked "RET") 'newline-and-indent)) ;; (alloy-def :keymaps 'override "RET" 'newline-and-indent))
+                      (naked "RET"))
+                        ;; (define-key alloy-override-mode-map (naked "RET") 'newline-and-indent))
+                        (alloy-define-key :keymaps 'override "RET" 'newline-and-indent))
           (when (lookup-key
                   alloy-override-mode-map
-                  (naked "RET")) (define-key alloy-override-mode-map (naked "RET") nil) ;; (alloy-def :keymaps 'override "RET" nil)
+                  (naked "RET"))
+                    ;; (define-key alloy-override-mode-map (naked "RET") nil)
+                    (alloy-define-key :keymaps 'override "RET" nil)
                   ))))
     (if (or
             ;; (meq/xwinp)
@@ -1036,7 +1043,7 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/which-key-change (keymap key name &optional hook) (interactive)
-    (when (featurep 'which-key)
+    (with-eval-after-load 'which-key
         (let* ((keys (split-string key " "))
                 (keymap-name (symbol-name (meq/keymap-symbol keymap)))
                 (keymap-keyword (meq/inconcat ":" keymap-name))
@@ -1062,15 +1069,15 @@ be ignored by `god-execute-with-current-bindings'."
 
 ;;;###autoload
 (defun meq/which-key-change-ryo (key name &optional hook) (interactive)
-    `(when (featurep 'ryo-modal)
-        (meq/which-key-change ryo-modal-mode-map ,key ,name ,hook)))
+    (with-eval-after-load 'ryo-modal
+        (meq/which-key-change ryo-modal-mode-map key name hook)))
 
 ;;;###autoload
 (meq/which-key-change-ryo ";" "meq")
 
 ;;;###autoload
 (defun meq/which-key-change-sorrow (key name &optional hook) (interactive)
-    (when (featurep 'sorrow)
+    (with-eval-after-load 'sorrow
         (meq/which-key-change sorrow-mode-map key name hook)))
 
 ;; Adapted From: https://www.reddit.com/r/emacs/comments/caifq4/package_updates_with_straight/et99epi?utm_source=share&utm_medium=web2x&context=3
