@@ -102,8 +102,8 @@
         "xero-figlet-fonts": "xero-figlet-fonts"
       },
       "locked": {
-        "lastModified": 1693880564,
-        "narHash": "sha256-GrMNg0nFReTQpjzqCAS+WRcvjcxDJnPGVJvXRqPplJs=",
+        "lastModified": 1693886956,
+        "narHash": "sha256-Qg99cbw5XwgFVO+QyebtESAfAVt6ndZhA0Cz6XTp/z0=",
         "submodules": true,
         "type": "git",
         "url": "file:///home/shadowrylander/shadowrylander/bundle"
@@ -1545,8 +1545,8 @@
         "sh": "sh"
       },
       "locked": {
-        "lastModified": 1693880561,
-        "narHash": "sha256-QTuF4pwPngCl8IeTwS1DUqdAGCs2eHuWlVXzEToJqgg=",
+        "lastModified": 1693886953,
+        "narHash": "sha256-s0w4fvtphOoG1Eo+uPzxw/R6bMmYWP7hKqnNYBp24q8=",
         "submodules": true,
         "type": "git",
         "url": "file:///home/shadowrylander/shadowrylander/sylveon/syvlorg/valiant"
